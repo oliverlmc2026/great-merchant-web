@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>兇獸</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#14181c;font-family:'Noto Sans TC',sans-serif;color:#e8e4da}
+a{color:#c9a24b}a:hover{color:#e8e4da}
+</style>
+</helmet>
+<div style="width:100%;max-width:1280px;margin:0 auto;box-sizing:border-box;padding:56px 56px 96px;display:flex;flex-direction:column;gap:40px;background:#14181c">
+  <nav><a href="Main.dc.html" style="font-size:15px;font-weight:700">← 回到目錄</a></nav>
+  <header style="display:flex;flex-direction:column;gap:12px;border-bottom:1px solid #3a444c;padding-bottom:32px">
+    <div style="font-size:14px;letter-spacing:0.3em;color:#c9a24b;font-weight:700">將帥與傭兵</div>
+    <h1 style="margin:0;font-family:'Noto Serif TC',serif;font-weight:900;font-size:60px;line-height:1.1">兇獸</h1>
+    <p style="margin:0;font-size:17px;line-height:1.7;color:#aab2b8;max-width:760px">四國各有一隻兇獸，另有可覺醒版本。覺醒兇獸不限國籍，需信用等級 100 或以上，紅利為兇獸總屬性的 1/10。</p>
+  </header>
+
+  <div style="display:flex;flex-wrap:wrap;gap:10px">
+    <sc-for list="{{tabs}}" as="t" hint-placeholder-count="4">
+      <button onClick="{{t.pick}}" style="min-height:44px;padding:0 20px;border-radius:6px;font-family:inherit;font-size:16px;font-weight:700;cursor:pointer;border:1px solid {{t.border}};background:{{t.bg}};color:{{t.fg}}">{{t.name}}</button>
+    </sc-for>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:24px;align-items:start">
+    <sc-for list="{{forms}}" as="f" hint-placeholder-count="2">
+      <article style="display:flex;flex-direction:column;gap:20px;padding:24px;background:#1c2328;border:1px solid #2c353c;border-radius:8px">
+        <div style="display:flex;gap:16px;align-items:center">
+          <img src="{{f.img}}" alt="{{f.name}}" style="width:96px;height:96px;object-fit:contain;background:#0e1114;border:1px solid #3a444c;border-radius:6px">
+          <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+            <div style="font-size:12px;letter-spacing:0.2em;color:{{f.tagColor}};font-weight:700">{{f.tag}}</div>
+            <div style="font-family:'Noto Serif TC',serif;font-weight:900;font-size:28px">{{f.name}}</div>
+            <div style="font-size:14px;color:#aab2b8">{{f.en}}</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px">
+          <sc-for list="{{f.stats}}" as="s" hint-placeholder-count="6">
+            <div style="padding:10px 12px;background:#14181c;border:1px solid #2c353c;border-radius:6px;display:flex;flex-direction:column;gap:2px"><span style="font-size:12px;color:#aab2b8">{{s.k}}</span><span style="font-family:'Noto Serif TC',serif;font-weight:900;font-size:22px">{{s.v}}</span></div>
+          </sc-for>
+        </div>
+        <p style="margin:0;font-size:15px;line-height:1.8;color:#c3c9ce;white-space:pre-line">{{f.desc}}</p>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="font-size:13px;letter-spacing:0.15em;color:#c9a24b;font-weight:700">僱用條件／材料</div>
+          <p style="margin:0;font-size:14px;line-height:1.7;color:#aab2b8;white-space:pre-line">{{f.hire}}</p>
+        </div>
+      </article>
+    </sc-for>
+  </div>
+
+  <section style="display:flex;flex-direction:column;gap:10px;border-top:1px solid #3a444c;padding-top:28px">
+    <h2 style="margin:0;font-size:14px;letter-spacing:0.2em;color:#c9a24b">覺醒須知</h2>
+    <p style="margin:0;font-size:15px;line-height:1.9;color:#c3c9ce">NPC 位置：須彌山 Sumeru 10 點鐘方向。覺醒兇獸不限國籍，需信用度 100 或以上。兇獸可穿裝備覺醒（裝備須為可交易）。角色最多同時有 2 隻兇獸／覺醒兇獸／明王於兵陣內（象冥不計）。覺醒材料須全部放喺主角身上。</p>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { i: null }; window.addEventListener('hashchange', () => this.setState({ i: this.tabFromHash() })); }
+  tabFromHash() { const h = decodeURIComponent(location.hash.slice(1)); const k = (this._N || []).findIndex((n, j) => n === h || (this._A || [])[j] === h || (h && h.startsWith(n))); return Math.max(0, k); }
+  renderVals() {
+    const B = [
+      { tab:'饕餮', forms:[
+        { tag:'兇獸 · 台灣主角', name:'饕餮', en:'Hired Taotie', img:'blob/c0dbc055e9c5293499ad53cabb992564.jpg',
+          st:[['力量','500'],['敏捷','150'],['體質','300'],['智力','100'],['打抗','80%'],['法抗','60%']],
+          desc:'只限台灣主角可以僱用。\n武器：饕餮的角\n固有技能：鬼槍（300mp）；武器技能：饕餮的破壞\n特性：衝突、破壞\n建議配點：體質（吸經升等）\n不可對空，技能計虛榮甲胄（念）',
+          hire:'信用等級 95 或以上，於各國操練所僱用\n甲馬 + 原住民長老 + 牛魔王 + Perils Soul x10 + Sealed Scroll x3' },
+        { tag:'覺醒', name:'覺醒饕餮', en:'Awakened Taotie', img:'blob/6f69798e6cb4d0f4a4af819d721dc74d.jpg',
+          st:[['力量','800'],['敏捷','100'],['體質','500'],['智力','100'],['打抗','90%'],['法抗','80%']],
+          desc:'覺醒不限國籍。\n固有技能：召喚火神（250+lv mp）\n特性：強化 Powered（最高 100%）、破壞 Ravage（最高 15%）\n建議配點：力量\n技能為召一隻覺醒饕餮作坦克頂怪用',
+          hire:'信用等級 100 或以上\n饕餮 + Flame Stone x50 + Dark Tablet (VB) x25 + A burning piece of Ashes x50 + Flame Dragon Embers x100 + Perils Soul x50 + Source of Power x2 + Awaken Stone x3' } ] },
+      { tab:'窮奇', forms:[
+        { tag:'兇獸 · 日本主角', name:'窮奇', en:'Hired Qiong Qi', img:'blob/d93beadbdfcc6300ddd063acbcf188d2.jpg',
+          st:[['力量','200'],['敏捷','100'],['體質','200'],['智力','400'],['打抗','50%'],['法抗','70%']],
+          desc:'只限日本主角可以僱用。\n武器：窮奇的羽毛\n固有技能：天羽齊發（100+lv*2 mp）；武器技能：窮奇的狡猾\n特性：空中彈、狡猾\n配點：體質（吸經升等）\n技能可對空，計虛榮甲胄（念）',
+          hire:'信用等級 95 或以上，於各國操練所僱用\n犬神 + 雪姬 + 毒鳥 + Perils Soul x10 + Sealed Scroll x3' },
+        { tag:'覺醒', name:'覺醒窮奇', en:'Awakened Qiong Qi', img:'blob/09a24c9fb40066d247b55bdf6c6588a6.jpg',
+          st:[['力量','250'],['敏捷','100'],['體質','400'],['智力','600'],['打抗','80%'],['法抗','80%']],
+          desc:'覺醒不限國籍。\n固有技能：冰羽（350+lv mp）\n特性：冰羽 Sneaky（最高 100%）、貫穿 Penetration（最高 10%）\n建議配點：智力\n技能可對空，空中大範圍攻擊，計主拍清音（陰）',
+          hire:'信用等級 100 或以上\n窮奇 + Frozen Stone x50 + Dark Tablet(BT) x25 + Gold Starfish Shell x50 + Water Essence x75 + Perils Soul x50 + Source of Power x2 + Awaken Stone x3' } ] },
+      { tab:'檮杌', forms:[
+        { tag:'兇獸 · 中國主角', name:'檮杌', en:'Hired Taowu', img:'blob/b964a6b6e261ecf637c45354b5d22706.jpg',
+          st:[['力量','200'],['敏捷','150'],['體質','400'],['智力','100'],['打抗','60%'],['法抗','50%']],
+          desc:'只限中國主角可以僱用。\n武器：檮杌的獠牙\n固有技能：死亡氣息（200mp）；武器技能：檮杌的韌勁\n特性：充息、韌勁\n建議配點：體質\n技能不可對空，計主拍清音（陰）',
+          hire:'信用等級 95 或以上，於各國操練所僱用\n冰魔 + 獬豸 + 羅漢銅人 + Perils Soul x10 + Sealed Scroll x3' },
+        { tag:'覺醒', name:'覺醒檮杌', en:'Awakened Taowu', img:'blob/164415d84bf5958e7af3279118ba443a.jpg',
+          st:[['力量','200'],['敏捷','100'],['體質','800'],['智力','250'],['打抗','80%'],['法抗','80%']],
+          desc:'覺醒不限國籍。\n固有技能：風龍氣息\n特性：充息 Breath Charg（最高 150%）、韌勁 Tenacious（最高 15%）\n建議配點：體質\n技能可對空，對空怪傷害是地面怪物的 50%，計虛榮甲胄（念）',
+          hire:'信用等級 100 或以上\n檮杌 + maple Stone x50 + Dark Tablet(WT) x25 + tail fur filled maple stone color x50 + Gale flame x25 + Perils Soul x50 + Source of Power x2 + Awaken Stone x3' } ] },
+      { tab:'混沌', forms:[
+        { tag:'兇獸 · 朝鮮主角', name:'混沌', en:'Hired Hundun', img:'blob/0dcdc33a0a412324eb3567aeaae45677.jpg',
+          st:[['力量','150'],['敏捷','500'],['體質','200'],['智力','100'],['打抗','60%'],['法抗','60%']],
+          desc:'只限朝鮮主角可以僱用。\n武器：混沌的刺\n固有技能：痛苦之刺（250mp）；武器技能：混沌的狂氣（200mp）\n特性：爆擊、狂氣\n建議配點：體質（吸經升等）\n技能不可對空，計主拍清音（陰）',
+          hire:'信用等級 95 或以上，於各國操練所僱用\n巨山 + 鐮刀者 + 白龍 + Perils Soul x10 + Sealed Scroll x3' },
+        { tag:'覺醒', name:'覺醒混沌', en:'Awakened Hundun', img:'blob/b8eb4888f9404da5cb267324f5da811f.jpg',
+          st:[['力量','150'],['敏捷','800'],['體質','250'],['智力','200'],['打抗','80%'],['法抗','80%']],
+          desc:'覺醒不限國籍。\n固有技能：電擊之刺；武器技能：混沌的狂氣（200mp）\n特性：暴擊 Bomber、狂氣 Awakened（最高 25%）\n建議配點：敏捷\n技能不可對空，計主拍清音（陰）',
+          hire:'信用等級 100 或以上\n混沌 + Thunder Soul Stone x50 + Horn with thunder spirits x50 + snakes Leather full fill in thunder x50 + 其他材料（見原頁）' } ] }
+    ];
+    this._N = B.map((x) => x.tab);
+    const i = this.state.i != null ? this.state.i : this.tabFromHash();
+    const tabs = B.map((x, j) => ({ name: x.tab, pick: () => { location.hash = encodeURIComponent(x.tab); },
+      bg: j === i ? '#d2553a' : '#1c2328', fg: j === i ? '#14181c' : '#e8e4da', border: j === i ? '#d2553a' : '#3a444c' }));
+    const forms = B[i].forms.map((f) => ({ tag:f.tag, tagColor: f.tag === '覺醒' ? '#d2553a' : '#c9a24b', name:f.name, en:f.en, img:f.img, desc:f.desc, hire:f.hire,
+      stats: f.st.map(([a,b]) => ({ k:a, v:b })) }));
+    return { tabs, forms };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>目錄首頁</title>
+<script src="./support.js"></script>
+<script src="./search-data.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#14181c;font-family:'Noto Sans TC',sans-serif;color:#e8e4da}
+a{color:#e8e4da;text-decoration:none}
+a.entry:hover{background:#232a30}
+</style>
+</helmet>
+<div style="width:100%;max-width:1280px;margin:0 auto;box-sizing:border-box;padding:72px 56px 96px;display:flex;flex-direction:column;gap:56px;background:#14181c">
+  <header style="display:flex;flex-wrap:wrap;gap:32px;align-items:flex-end;justify-content:space-between;border-bottom:1px solid #3a444c;padding-bottom:40px">
+    <div style="display:flex;flex-direction:column;gap:14px;max-width:720px">
+      <div style="font-size:14px;letter-spacing:0.3em;color:#c9a24b;font-weight:700">GERSANG INTERNATIONAL · 資料庫</div>
+      <h1 style="margin:0;font-family:'Noto Serif TC',serif;font-weight:900;font-size:76px;line-height:1.05;color:#e8e4da">國際巨商資料庫</h1>
+      <p style="margin:0;font-size:18px;line-height:1.7;color:#aab2b8">將帥、傭兵、裝備、生產、副本與版本更新，按類別整理。揀一個類別開始查。</p>
+    </div>
+    <div style="display:flex;gap:40px">
+      <div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:'Noto Serif TC',serif;font-weight:900;font-size:48px;color:{{accent}}">59</div><div style="font-size:14px;color:#aab2b8">資料頁</div></div>
+      <div style="display:flex;flex-direction:column;gap:4px"><div style="font-family:'Noto Serif TC',serif;font-weight:900;font-size:48px;color:#c9a24b">1,145</div><div style="font-size:14px;color:#aab2b8">張圖片</div></div>
+    </div>
+  </header>
+
+  <section style="display:flex;flex-direction:column;gap:16px">
+    <input type="search" value="{{q}}" onInput="{{onQ}}" placeholder="搜尋全站內容，例如：饕餮、天王劍、光之試練（多個字用空格分隔）" aria-label="搜尋" style="min-height:52px;box-sizing:border-box;padding:0 18px;border-radius:8px;border:1px solid #3a444c;background:#1c2328;color:#e8e4da;font-family:inherit;font-size:18px;outline:none">
+    <sc-if value="{{hasQ}}" hint-placeholder-val="{{ false }}">
+      <div style="font-size:14px;color:#aab2b8">{{summary}}</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <sc-for list="{{results}}" as="r" hint-placeholder-count="3">
+          <a class="entry" href="{{r.href}}" style="display:flex;flex-direction:column;gap:8px;box-sizing:border-box;padding:14px 18px;border:1px solid #2c353c;background:#1c2328;border-radius:6px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap"><span style="font-size:17px;font-weight:700"><span style="color:#c9a24b">{{r.page}}</span> › {{r.tab}}</span><span style="font-size:12px;color:{{accent}};white-space:nowrap">{{r.count}} 筆相符 · 開啟 →</span></div>
+            <sc-for list="{{r.snips}}" as="sn" hint-placeholder-count="2">
+              <div style="font-size:14px;line-height:1.6;color:#aab2b8">{{sn.a}}<span style="color:#14181c;background:#c9a24b;border-radius:2px;padding:0 2px">{{sn.m}}</span>{{sn.b}}</div>
+            </sc-for>
+          </a>
+        </sc-for>
+      </div>
+    </sc-if>
+  </section>
+
+  <sc-if value="{{browse}}" hint-placeholder-val="{{ true }}">
+  <sc-for list="{{groups}}" as="g" hint-placeholder-count="3">
+    <section style="display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;align-items:baseline;gap:16px;flex-wrap:wrap">
+        <h2 style="margin:0;font-family:'Noto Serif TC',serif;font-weight:600;font-size:30px;color:#e8e4da">{{g.name}}</h2>
+        <span style="font-size:14px;color:#aab2b8">{{g.note}}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px">
+        <sc-for list="{{g.items}}" as="it" hint-placeholder-count="4">
+          <sc-if value="{{ it.linked }}" hint-placeholder-val="{{ false }}">
+            <a class="entry" href="{{it.href}}" style="display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:52px;box-sizing:border-box;padding:12px 16px;border:1px solid {{accent}};background:#1c2328;border-radius:6px;font-size:16px;font-weight:700"><span>{{it.name}}</span><span style="font-size:12px;color:{{accent}};white-space:nowrap">開啟 →</span></a>
+          </sc-if>
+          <sc-if value="{{ it.plain }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:center;min-height:52px;box-sizing:border-box;padding:12px 16px;border:1px solid #2c353c;background:#181e22;border-radius:6px;font-size:16px;color:#c3c9ce">{{it.name}}</div>
+          </sc-if>
+        </sc-for>
+      </div>
+    </section>
+  </sc-for>
+  </sc-if>
+
+  <footer style="border-top:1px solid #3a444c;padding-top:24px;font-size:14px;line-height:1.7;color:#8a949b">目錄入面所有頁面都已設計（亮邊框可開啟）。內容同圖片來自原 Google 試算表匯出，部分原匯出檔本身欠缺圖片或內容，已喺各頁註明。</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#d2553a","options":["#d2553a","#3f9a85","#5b8fd1"]}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { q: '' }; }
+  search(q) {
+    const terms = q.toLowerCase().split(/\s+/).filter(Boolean);
+    if (!terms.length) return { groups: 0, rows: 0, results: [] };
+    const labels = window.SEARCH_LABELS || {};
+    const by = new Map();
+    let rows = 0;
+    for (const r of (window.SEARCH_INDEX || [])) {
+      const low = r.x.toLowerCase();
+      if (!terms.every((t) => low.includes(t))) continue;
+      rows++;
+      const key = r.p + '\u0000' + r.t;
+      let g = by.get(key);
+      if (!g) { g = { p: r.p, t: r.t, n: 0, hits: [], nameHit: terms.every((t) => r.t.toLowerCase().includes(t)) }; by.set(key, g); }
+      g.n++;
+      if (g.hits.length < 3 && r.x !== r.t) g.hits.push(r.x);
+    }
+    const list = [...by.values()].sort((a, b) => (b.nameHit - a.nameHit) || (b.n - a.n));
+    const results = list.slice(0, 40).map((g) => ({
+      href: g.p + '.dc.html#' + encodeURIComponent(g.t),
+      page: labels[g.p] || g.p, tab: g.t, count: g.n,
+      snips: g.hits.map((x) => {
+        const low = x.toLowerCase();
+        const t = terms.find((w) => low.includes(w)) || terms[0];
+        const k = Math.max(0, low.indexOf(t));
+        const from = Math.max(0, k - 24);
+        return { a: (from > 0 ? '…' : '') + x.slice(from, k), m: x.slice(k, k + t.length), b: x.slice(k + t.length, k + t.length + 60) + (k + t.length + 60 < x.length ? '…' : '') };
+      })
+    }));
+    return { groups: list.length, rows, results };
+  }
+  renderVals() {
+    const q = this.state.q;
+    const S = this.search(q);
+    const hasQ = q.trim().length > 0;
+    const summary = S.groups ? ('搵到 ' + S.groups + ' 個分頁、共 ' + S.rows + ' 筆相符' + (S.groups > 40 ? '（只顯示最相關嘅 40 個分頁）' : '')) : '搵唔到相符內容，試下用較短嘅關鍵字。';
+    const accent = this.props.accent ?? '#d2553a';
+    const L = { '天王': 'Kings.dc.html', '兇獸': 'Beasts.dc.html' };
+    ['明王','神獸','幻獸&幻龍','傳說將帥','２轉將帥','覺醒 改造將帥','覺醒天王','證書怪物','精靈','陰 念傭兵比較','四天王發展建議','四天王升等打怪建議','天王武上石教學'].forEach((n) => { L[n] = 'Units.dc.html'; });
+    ['新手起手建議','新手小技巧','巨商修練書','傳送符','經驗兌換','戰鬥按鍵及技能系統說明','屬性值詳解','抗性屬性傷害及增益速查表'].forEach((n) => { L[n] = 'Newbie.dc.html'; });
+    const MAP = { Sys: ['主角','坐騎','星宿系統','組合技','陣形陣法','稱號','鬼道'], Equip: ['武器','防具','套裝數值比較','外觀裝飾','手腰鞋上石教學','鐡匠白七製作物品列表'], Prod: ['生產','匠人(礦夫 藥師)','匠人(鐵匠 煉金術士 細工師)','印度製作','小商團','商團','社團系統'], Inst: ['光之試驗','齊天大聖討伐模式教學','武道場 - 挑戰模式','武道場 - 血鬥戰場','武道場 - 靈異怪談','巨大Boss','客棧任務','寶箱','寶藏地圖','掃蕩令','怪物分佈圖'], Ver: ['專頁更新日誌','測試服版本說明','錯誤修正'] };
+    Object.keys(MAP).forEach((k) => MAP[k].forEach((n) => { L[n] = k + '.dc.html'; }));
+    const mk = (names) => names.map((n) => ({ name: n, linked: !!L[n], plain: !L[n], href: L[n] ? (n === '天王' || n === '兇獸' ? L[n] : L[n] + '#' + encodeURIComponent(n)) : '' }));
+    const groups = [
+      { name: '新手入門', note: '起手建議、系統與基礎概念', items: mk(['新手起手建議','新手小技巧','巨商修練書','傳送符','經驗兌換','戰鬥按鍵及技能系統說明','屬性值詳解','抗性屬性傷害及增益速查表']) },
+      { name: '將帥與傭兵', note: '天王、明王、兇獸、神獸與各類將帥', items: mk(['天王','明王','兇獸','神獸','幻獸&幻龍','傳說將帥','２轉將帥','覺醒 改造將帥','覺醒天王','證書怪物','精靈','陰 念傭兵比較','四天王發展建議','四天王升等打怪建議','天王武上石教學']) },
+      { name: '主角與系統', note: '主角特性、坐騎、陣形與稱號', items: mk(['主角','坐騎','星宿系統','組合技','陣形陣法','稱號','鬼道']) },
+      { name: '裝備', note: '武器、防具、套裝與上石', items: mk(['武器','防具','套裝數值比較','外觀裝飾','手腰鞋上石教學','鐡匠白七製作物品列表']) },
+      { name: '生產與商團', note: '工作量、匠人、工坊與團體', items: mk(['生產','匠人(礦夫 藥師)','匠人(鐵匠 煉金術士 細工師)','印度製作','小商團','商團','社團系統']) },
+      { name: '副本與活動', note: '挑戰、Boss、任務與寶箱', items: mk(['光之試驗','齊天大聖討伐模式教學','武道場 - 挑戰模式','武道場 - 血鬥戰場','武道場 - 靈異怪談','巨大Boss','客棧任務','寶箱','寶藏地圖','掃蕩令','怪物分佈圖']) },
+      { name: '版本與公告', note: '更新日誌、測試服與錯誤修正', items: mk(['專頁更新日誌','測試服版本說明','錯誤修正']) }
+    ];
+    return { accent, groups, q, hasQ, browse: !hasQ, summary, results: S.results, onQ: (e) => this.setState({ q: e.target.value }) };
+  }
+}
+</script>
+</body>
+</html>

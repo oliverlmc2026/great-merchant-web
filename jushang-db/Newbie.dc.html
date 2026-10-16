@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>新手入門</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#14181c;font-family:'Noto Sans TC',sans-serif;color:#e8e4da}
+a{color:#c9a24b}a:hover{color:#e8e4da}
+</style>
+</helmet>
+<div style="width:100%;max-width:1280px;margin:0 auto;box-sizing:border-box;padding:56px 56px 96px;display:flex;flex-direction:column;gap:36px;background:#14181c">
+  <nav><a href="Main.dc.html" style="font-size:15px;font-weight:700">← 回到目錄</a></nav>
+  <header style="display:flex;flex-direction:column;gap:12px;border-bottom:1px solid #3a444c;padding-bottom:28px">
+    <div style="font-size:14px;letter-spacing:0.3em;color:#c9a24b;font-weight:700">新手入門</div>
+    <h1 style="margin:0;font-family:'Noto Serif TC',serif;font-weight:900;font-size:56px;line-height:1.1">{{cur.title}}</h1>
+    <p style="margin:0;font-size:17px;line-height:1.7;color:#aab2b8;max-width:820px;white-space:pre-line">{{cur.intro}}</p>
+  </header>
+
+  <div style="display:flex;flex-wrap:wrap;gap:10px">
+    <sc-for list="{{tabs}}" as="t" hint-placeholder-count="8">
+      <button onClick="{{t.pick}}" style="min-height:44px;padding:0 16px;border-radius:6px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;border:1px solid {{t.border}};background:{{t.bg}};color:{{t.fg}}">{{t.name}}</button>
+    </sc-for>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:20px">
+    <sc-for list="{{cur.blocks}}" as="b" hint-placeholder-count="3">
+      <section style="display:flex;flex-direction:column;gap:12px;padding:24px;background:#1c2328;border:1px solid #2c353c;border-radius:8px">
+        <h2 style="margin:0;font-family:'Noto Serif TC',serif;font-weight:600;font-size:24px;color:#e8e4da">{{b.h}}</h2>
+        <sc-if value="{{b.hasText}}" hint-placeholder-val="{{ true }}">
+          <p style="margin:0;font-size:16px;line-height:1.85;color:#c3c9ce;white-space:pre-line">{{b.text}}</p>
+        </sc-if>
+        <sc-if value="{{b.hasItems}}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{b.items}}" as="it" hint-placeholder-count="3">
+              <div style="display:flex;gap:12px;align-items:flex-start"><span style="flex:0 0 28px;height:28px;border-radius:14px;background:#2c353c;color:#c9a24b;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center">{{it.n}}</span><span style="flex:1;min-width:0;font-size:16px;line-height:1.8;color:#e8e4da;white-space:pre-line">{{it.t}}</span></div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{b.hasTable}}" hint-placeholder-val="{{ false }}">
+          <div style="overflow-x:auto;border:1px solid #2c353c;border-radius:6px;max-height:520px;overflow-y:auto">
+            <table style="border-collapse:collapse;width:100%;min-width:{{b.minW}}px;font-size:14px;line-height:1.6">
+              <thead><tr style="background:#181e22"><sc-for list="{{b.head}}" as="hc" hint-placeholder-count="3"><th style="text-align:left;padding:10px 12px;color:#c9a24b;font-weight:700;position:sticky;top:0;background:#181e22">{{hc}}</th></sc-for></tr></thead>
+              <tbody>
+                <sc-for list="{{b.rows}}" as="r" hint-placeholder-count="4">
+                  <tr style="border-top:1px solid #2c353c"><sc-for list="{{r.cells}}" as="c" hint-placeholder-count="3"><td style="padding:9px 12px;vertical-align:top;white-space:pre-line">{{c}}</td></sc-for></tr>
+                </sc-for>
+              </tbody>
+            </table>
+          </div>
+        </sc-if>
+        <sc-if value="{{b.hasImgs}}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px">
+            <sc-for list="{{b.imgs}}" as="im" hint-placeholder-count="2">
+              <figure style="margin:0;display:flex;flex-direction:column;gap:6px"><img src="{{im.u}}" alt="{{im.cap}}" style="width:100%;height:auto;border:1px solid #3a444c;border-radius:6px;background:#0e1114"><figcaption style="font-size:13px;color:#8a949b">{{im.cap}}</figcaption></figure>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{b.hasCalc}}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+              <img src="{{b.calc.portrait}}" alt="多聞天王 Vaisravana" style="width:89px;height:115px;border:1px solid #3a444c;border-radius:6px">
+              <p style="margin:0;flex:1 1 320px;font-size:15px;line-height:1.8;color:#c3c9ce">輸入怪物抗性、你方降抗總和、雙方屬性值同無屬性基礎傷害，即時計算扣抗後同屬性加減成後嘅預計傷害。公式取自本頁同「屬性值詳解」。</p>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:10px">
+              <sc-for list="{{b.calc.modes}}" as="m" hint-placeholder-count="3">
+                <button onClick="{{m.pick}}" style="min-height:44px;padding:0 16px;border-radius:6px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;border:1px solid {{m.border}};background:{{m.bg}};color:{{m.fg}}">{{m.name}}</button>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px">
+              <sc-for list="{{b.calc.fields}}" as="fd" hint-placeholder-count="5">
+                <label style="display:flex;flex-direction:column;gap:6px;font-size:14px;color:#aab2b8">{{fd.label}}
+                  <input type="number" value="{{fd.value}}" onInput="{{fd.on}}" style="min-height:44px;box-sizing:border-box;padding:0 12px;border-radius:6px;border:1px solid #4a8c5c;background:#17241b;color:#e8e4da;font-family:inherit;font-size:18px;font-weight:700">
+                </label>
+              </sc-for>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+              <sc-for list="{{b.calc.results}}" as="rs" hint-placeholder-count="5">
+                <div style="padding:14px 16px;background:#14181c;border:1px solid #2c353c;border-radius:6px;display:flex;flex-direction:column;gap:4px"><span style="font-size:13px;color:#aab2b8">{{rs.k}}</span><span style="font-family:'Noto Serif TC',serif;font-weight:900;font-size:28px;color:{{rs.color}}">{{rs.v}}</span></div>
+              </sc-for>
+            </div>
+            <p style="margin:0;font-size:13px;line-height:1.7;color:#8a949b">抗性減傷率 = 57% + 0.16% × 有效抗性（有效抗性 = 怪物抗性 − 降抗，限 0–260）。屬性：剋制時，我方屬性值 ≥ 對方則加成 = 我方屬性值%；低於則加成 = 我方 − (對方 − 我方) ÷ 2；無關係且我方較低則減 (差 × 1.5)%；被剋則減對方屬性值%。結果最低 0。呢個係按頁面公式重建嘅計算器，唔係原試算表嘅複製。</p>
+          </div>
+        </sc-if>
+        <sc-if value="{{b.hasNote}}" hint-placeholder-val="{{ false }}">
+          <p style="margin:0;font-size:14px;line-height:1.7;color:#d2553a;white-space:pre-line">{{b.note}}</p>
+        </sc-if>
+      </section>
+    </sc-for>
+  </div>
+  <footer style="border-top:1px solid #3a444c;padding-top:20px;font-size:13px;line-height:1.7;color:#8a949b">資料同截圖來自原 Google 試算表匯出頁；截圖按原頁位置擺放，已壓縮。</footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { i: null, mode: 'beat', mobRes: '150', cut: '50', mine: '40', theirs: '20', base: '2144' }; window.addEventListener('hashchange', () => this.setState({ i: this.tabFromHash() })); }
+  tabFromHash() { const h = decodeURIComponent(location.hash.slice(1)); const k = (this._N || []).findIndex((n, j) => n === h || (this._A || [])[j] === h || (h && h.startsWith(n))); return Math.max(0, k); }
+  renderVals() {
+    const L = (a) => a.map((t, i) => ({ n: String(i + 1), t }));
+    const T = (head, rows, minW) => ({ head, rows: rows.map((r) => ({ cells: r })), minW: minW || 520 });
+    const sec = (h, o) => Object.assign({ h }, o);
+
+    // ---- 傳送符 ----
+    const tp = (title, arr) => sec(title, { table: T(['地點', '費用'], arr.map((s) => s.split('|')), 420) });
+    const T4 = [
+      tp('[1] 朝鮮', ['月奇峰|50萬','千年湖|50萬','漢拏山|50萬','大觀嶺|50萬','高手洞窟 3F|50萬','武寧王陵|50萬','巨濟海底洞|50萬','黑色商團營地|50萬','白商會營地|50萬','黃天福的家|50萬','桂林|100萬','秘密場所|50萬','秘密祭壇|50萬','炎雀峰|100萬','介馬莊園|100萬']),
+      tp('[2] 日本', ['鬼曲城|50萬','鬼曲城 2F|50萬','鬼曲城 3F|100萬','石鎚山|50萬','石鎚山 2F|50萬','石鎚山 3F|100萬','大雪山冰谷|50萬','冰城 1F|50萬','冰城 2F|100萬','冰城 3F|100萬','毒蛇的巢穴|100萬','龍神之泉|100萬']),
+      tp('[3] 中國', ['少林寺|50萬','小玲的後院|50萬','小玲的後院花園|50萬','小玲的後院住宅|50萬','冰宮|50萬','冰雪神殿花園|50萬','冰雪神殿|50萬','破奧之塔下層|50萬','破奧之塔上層|50萬','詭異的洞窟|50萬','冰宮庭院|100萬','冰宮內城|100萬','秦始皇陵墓|100萬','秦始皇陵3層地下宮殿|100萬','北海冰窟|100萬']),
+      tp('[4] 台灣', ['台灣海底洞|50萬','奇獨龜輪山 1F|50萬','奇獨龜輪山 2F|50萬','海賊洞|50萬','海賊洞 2F|50萬','隆山 1F–3F|各 50萬','隆山 4F|100萬','幽冥界 1F–3F|各 50萬','野獸林前院|100萬','野獸林幕舍|100萬','瘴氣森林|100萬']),
+      tp('[5] 印度', ['加德滿都|100萬','尼泊爾石窟下層／上層|各 100萬','泰姬陵庭院／內部|各 100萬','太陽寺院、前院、內部、上層|各 100萬','提婆神廟、2F、3F、地下2層|各 100萬','遺棄的海岸寺院／秘密房間|各 100萬']),
+      tp('[6] 特殊地形 1', ['帝王陵寢 1F–5F（3F 需先解門口任務打沙巨人拎通行證）|各 200萬','須彌山|200萬','神仙谷惡人村／神仙谷（中間）|各 200萬','神仙谷 炎魔洞／炎魔洞（內城）／黑龍潭|各 200萬']),
+      tp('[7] 特殊地形 2', ['月天鬼門 1F／2F、日天鬼門 1F／2F／3F 等|各 300萬','噩夢的縫隙 1F／2F|各 300萬','噩夢的縫隙 3F（噩夢的房間）|500萬','噩夢的根源 1F／2F|各 300萬','噩夢的根源 3F（噩夢的祭壇）|500萬']),
+      tp('[8] 特殊地形 3', ['匡廬山頂部／藏身處 1F／2F／峽谷|各 300萬','藏身處地下墳墓／峽谷秘密研究所|各 500萬','幻想溪谷（夕陽）|300萬','星之祠堂、噩夢的龜裂|各 500萬','夢幻溪谷（清晨）等其餘地點|見原頁'])
+    ];
+    T4.unshift(sec('使用規則', { items: L(['市街 4 點方向有傳送符商人 Scroll Merchant_Yeol。','傳送符按國家、特殊地形（由帝王陵寢開始）分類販售。','需要擁有該特殊地形地區嘅通行證。','需要符合該地區嘅等級要求。','一次最多購買 100 個。']) }));
+
+    // ---- 抗性表（按原表規律：減傷率 = 57% + 0.16% × 有效抗性，上限 260） ----
+    const resRows = [0,20,40,60,80,100,120,140,160,180,200,220,240,260].map((r) => {
+      const red = 57 + 0.16 * r;
+      return [String(r), red.toFixed(2) + '%', (100 - red).toFixed(2) + '%'];
+    });
+
+    const TABS = [
+      { name: '新手起手建議', title: '新手起手建議', intro: '新手起手建議：由開局買兵、解任務、升級路線到課金次序。', blocks: [
+        sec('開局與練級路線', { items: L([
+          '起手建議台男，紅利點全智，做埋新手教學，拎新手杖。',
+          '喺台灣買 1 隻道士，日本買 1 隻陰陽師，中國買 MP 女（3 隻），朝鮮買馬弓（4 隻，武鬥場九段對空用）。\nP.S. 國巨可以 3 開，用其他 AC 幫自己請兵。',
+          '順序解商業任務同戰鬥任務，會拎到 15 日雷擊槍。中途主角夠 150lv 就可以去武道場打 10 段轉 1 轉主。\n（注意 0 轉主轉 1 轉主需要除武器，限時嘅武器除低會消失）',
+          '做完全部商業任務同戰鬥任務，可以拎到 7 日武器（狐娃；另外 2 把建議拎 Guojiu Secret Sword 同 Doll of Ram chae hwa）。',
+          '之後去解千年湖任務，就可以去高手洞 3 樓，解 1 樓同 3 樓每日任務拎勇氣證明。',
+          '其他地方嘅日任都可以拎到勇氣證明，例如：漢拏山、台灣海賊洞、武寧、巨濟海底洞等等。',
+          '儲齊 15 個勇氣證明，可以喺市街左邊近台北出口位置同 NPC 換 1 日狐仙娃娃（實際上可以用 3 日）俾主角用（主角 100lv 先用得）。',
+          '主角可以去高手洞 3 樓打怪升 lv，直到 180lv。',
+          '180lv 之後，去台灣海賊洞 2 層打怪升 lv，直到 200lv。',
+          '200lv 之後入唔到台灣海賊洞 2 層，可以去以下地方做任務／打怪升 lv 順便賺錢：\n· 冰城門口嘅骷髏或冰蟹\n· 神仙谷嘅小兇獸（兇魂／兇武材料）\n· 商會營地嘅中毒三門（生精／舊鬼刀／操練師的鞭子），其他料朝女賣店（出入證前置為五大神獸任務）\n· 破奧內嘅夢魔（除惡魔種子外皆可賣人）',
+          '降抗更高或主角更高 lv、傷害足夠時，可以去：須彌山（朝兇）、台灣海賊洞（龜弓）、蒙古帝陵（松魚人）、冰城 2F（冰樹／冰肥）、神仙谷（有屬性嘅小怪）。',
+          '主號最終目標基本完陣要求：\n· 狐仙娃娃（主角 210 等後可考慮買，約 1.8–1.9B，即 18–19 億）\n· 雷公覺醒（暈怪 1–2 秒）\n· 水精靈 2–3lv，有錢升 4lv（緩怪速）\n· 風精靈 2–3lv，有錢升 4lv（加自己陣戰鬥時移動速度）\n· 250lv 陰陽師（降抗增加傷害）\n· 青龍符，視乎自己情況有無需要（緩怪速＋加自己陣戰鬥時移動速度）',
+          '之後睇自己狀況，買強降抗武器（提高賺錢效率），或者出神獸同麒麟準備合天王。'
+        ]) })
+        , sec('課金建議次序', { text: '如果會課金，建議次序如下（資金充裕可直接跳到第 6 項一次性課完）：', table: T(['次序', '內容'], [
+          ['1','雷公 3 轉 + 250 陰'],['2','雷公 3 轉 + 250 陰 + 永久狐娃'],['3','雷公 3 轉 + 250 陰 + 永久狐娃 + 水精、風精'],['4','雷公 3 轉 + 250 陰 + 永久狐娃 + 水精、風精 + 青龍符'],['5','上一項 + 麒麟 + 另一隻神獸（視乎想合邊隻天王而定）'],['6','上一項 + 麒麟武器']], 520) })
+      ] },
+      { name: '新手小技巧', title: '新手小技巧', intro: '15 個常用小技巧：捉精靈、Recall、設定、巨大 Boss、卡任務傳送、升級食藥等。', blocks: [
+        sec('1. 去神仙谷捉精靈', { text: '主角 150lv 後，去神仙谷找 NPC 何仙姑（He Xiangu）捉精靈。一天有 3 次機會，捉一次需 1m（3 次 = 3m）。\n有狐仙娃娃 + 陰陽師已夠解決所有地怪（有時會出現空怪，清完地怪便走場）。\nNPC 地點：中國地區 Road to Taoist hermit valley，進去後喺地圖左上角。', items: L(['喺左邊 attribute 選擇屬性（建議 Earth）。','點擊右下角 explore 1 下（唔好連按，會扣次數）。','點擊中間 attempt to catch，扣 1m，進入戰鬥。','打怪有機會掉落 SSA、FFB 同三角精靈石，低機率跌司令盔甲。','重覆 3 次直至左下角 Chance 變 0。']), note: '以土屬為例，掉 1 粒土 SSA 市價已值 8–9m，長期打一定賺錢。其餘屬性以拍賣所市價為準。\nSSA = Small stone the attribute of XXXX；FFB = Fragmented Force Beads(XXXX)；三角精靈石 = XXXX specter stone' }),
+        sec('2. 商團 Recall 技能', { text: '加入商團等級 17lv 或以上嘅商團後，組隊會喺 Party 介面右下角出現 Party Recall 按鈕。可支付 20 萬召喚同隊其他人傳送到你身邊，但等級不能相差超過 99lv。\n多數會升一隻 1 轉朝女分身配合使用：先用 1 轉朝女特性喺特殊地形記錄地點，把朝女傳送過去，再用 Recall 傳送其餘隊友。', note: '按下 Recall 即扣 20 萬，不管對方是否接受。' }),
+        sec('3. 朝女特性：賣物品及傳送', { text: '賣物品：1 轉朝女升到 180lv 後，特性 Negotiation 可點到 Level 10，可以用 1.3 倍價錢賣 NPC 店冇嘅物品（原價 40 萬 → 52 萬）。\n傳送：1 轉朝女可記錄 3 個地點（包含大部份特殊地形）。記錄、刪除、傳送各需 1m。' }),
+        sec('4. 入戰鬥後按 Tab', { text: '入戰鬥時，左下角小地圖背景顏色同怪物點顏色好接近。按一下 Tab，地圖會變黑色，方便查看怪物位置。' }),
+        sec('5. Game Setting 功能', { text: '按 Esc 後喺 Game Setting 可以調整：', items: L(['Mouse Settings：Mouse Method（左鍵或右鍵為主要鍵）、Mouse Capture（On = 滑鼠不能超出視窗，快捷鍵 F5）、Mouse Type。','Battle Settings：Set Shortcuts（自行調整傭兵順序同放技能鍵）、Quick Withdraw（改為 Use 後，入戰時快速連按 2 下 Esc 直接走場）、Skill Range、Keyboard Skills（選 Use）、Battle HP display（選 Use）、Health Display（建議 Graphical Type）、Skill transparency（最低 30%，不影響放陰／念）。','Field Settings：Shortcut Settings（左下角點 Display sign，最頂多出一行 Shortcut）、Settings of Pet（Hide to Other Users Pet 隱藏其他玩家嘅寵物同帥）。']) }),
+        sec('6. Victory Coin 用途', { text: '剛登入會見到「The great country of the week is Taiwan/China」，代表當周戰勝國。用該戰勝國國籍嘅主角打怪，有機率掉落 Victory coin。\n右鍵點擊自己角色 → Battleground → 右下角 Move，付款傳送至印度武鬥場，向右下行幾步見 NPC Foreign Mission。\nSell items 可把 Victory coin 換 National Reputation，會得到 Party table、Bangyetang 同 Mass effect（記得先吃 Mass effect 再換）。\nBuy items 可用 National Reputation + 錢換物品（新手建議全部換左上角嘅 Sealed Power Piece，約 7 VC 換 1 塊）。' }),
+        sec('7. 快速傳送', { text: '即使喺特殊地形，也可以透過地圖快速傳送回城。', items: L(['按 M 鍵打開地圖，點右上角行星符號。','點上方 Shortcut。','點地圖上嘅太極符號傳送（需 10 萬）。']), note: '身上有 Shortcut Token(U) 會優先扣此物品，可喺市街 NPC Silkroad Merchant Guild 購買：8M + 信用度 100 = 100 粒（相當 8 折傳送）。' }),
+        sec('8. 更換 Trade / Rejected', { text: '如果別人組唔到你或易唔到你，留意角色右下角是否「Rejected」；如是，按一下 X 鍵更換為 Trade。目前快速傳送後會自動變 Rejected。' }),
+        sec('9. 巨大 Boss（賣憤怒值）', { text: '日常做任務同打怪都會累積憤怒值（1 天上限 100%）。按 H 鍵 → Giant boss 睇藍色 Bar；右上角 III 著燈 = 已累積完，可賣俾人換錢。', items: L(['喺大頻打「S>Giant boss Lv3 20M」（目前市價 20M）。','有人收後，組隊並將隊長俾他。','由你召喚巨大 Boss（需 3M），等他準備好後由你點怪入戰。','入戰後你甚麼都唔使做，等完場。']), note: '實際賺到約 17M。特定地圖打怪有機會掉落 Small Maddness Essence，使用後增加憤怒值（20 支 Small = 1 隻 3lv 巨大 Boss）。詳情見「巨大Boss」頁。' }),
+        sec('10. 卡任務傳送', { text: '所有交物品嘅任務，都可以用作傳送卡任務。', items: L(['角色身上要有該任務要嘅物品。','按 Q 鍵找到任務，按右下角 To the NPC。','傳送後唔好交任務，再按 Q 找到該任務，按左下角 Abandon。','放棄後找 NPC 重新接任務，然後重新登出再登入。','便可以再用 To the NPC 傳送多一次。']), note: '小心唔好點錯 NPC 而交咗任務！' }),
+        sec('11. 升等時應該吃哪些藥？', { text: '打手：(1) Everything Goes 七福 (2) Double Bonus Exp 日積月累 (3) Narcissism 自我陶醉／變身書 (4) Devil wing 惡魔翅膀 (5) Guild banquet 商團宴會／Small Guild banquet 小商團宴會（全團人一起用）(6) Art of War 24 孫子兵法 24（2／3 開時先有用，可增加 1 位進入戰鬥嘅傭兵）\n\n吸手：(1) Everything Goes 七福 (2) Double Bonus Exp 日積月累 (3) Guild banquet／Small Guild banquet (4) Art of War 24\n\nDangun Mirror 只有打手用先有效：出戰 + 照鏡 ×1.875；出戰 ×1.5；照鏡 ×1.375；冇用鏡 ×1。即只照 +37.5% 經驗、出戰 +50%、出戰 + 照 +87.5%。\n\n其他有能力也可以吃：Speedy（加移動速度）、Sentimentality（加精靈友好度）、Minion（全隊加力／敏／智／體）、Provoke（戰鬥時增加 1 隊怪物）、Charm of Evasion（防止怪物亂入）、Companion（單開時戰鬥可用 2 隻精靈）、HP／Mana／Spirit Pill（戰鬥後自動補血／MP）。' }),
+        sec('12. 隨身客棧', { text: '使用 Tavern Pass 後，喺客棧更換傭兵唔使支付 Food（仍要更換費用）。右下角會出現「酒」符號，點擊便可隨處換傭兵。\n更換同類型傭兵（0 轉／1 轉／2 轉／Monster）時，身上物品會自動放到換出嘅傭兵上；不同類型（例如明王換 2 轉帥）要先把明王清空放到 Monster 倉，有 1 個空位後再取出 2 轉帥。' }),
+        sec('13. 防外掛系統', { text: '點怪時有機會出現。留意頭上有金牌嘅角色，倒數 3 秒後 5 隻角色會隨機換位，要記得金牌角色最後移到邊個位置。', note: '只有 1 次機會選擇，選錯會強制關閉巨商。重登後掉寶率被扣：錯 1 次 = 扣 0% 12 小時；錯 2 次 = 扣 51% 12 小時；錯 3 次 = 扣 100% 12 小時；錯 4 次 = 帳號被 Ban 24 小時。' }),
+        sec('14. 拍賣所卷', { text: '可喺市街 NPC Silkroad Merchant Guild 購買：15M 可用 6 日。使用後喺 Option 打開 Shortcut Settings，把 Auction 放到上面 6 個空格其中之一，再點左下角 Display sign，上方會出現圖示，左鍵點擊隨時使用拍賣所功能。' }),
+        sec('15. 包袱背包與英雄靈魂石', { text: '包袱背包：背包下方選包袱造型按鍵打開。基本 5 格（重量 1,000），信用等級達 100、110、120、130 時可各開多 5 格（重量 +500）。角色綁定，不與帳號其他角色共享。\n\n碎兵做英雄嘅靈魂石：漢陽向右行，鬼道 NPC 後面嘅後山（靈魂之森），跟 NPC 公墓管理員交換。任何傭兵達 200Lv 可交換 Hero Soul Stone，建議 201Lv 或 250Lv 再交換，性價比最高。' })
+      ] },
+      { name: '巨商修練書', title: '巨商修練書', intro: '30 個依序完成嘅任務，每個角色只可執行一次。', blocks: [
+        sec('基礎說明', { items: L(['信用等級 70 以上，可到順天附近 NPC「白商會會長_瑞來」進行「巨商修練書入門」任務。','完成入門任務後，可使用「巨商修練書」。','每個角色僅可執行一次。','由 30 個任務組成，需依序完成。','勾選任務通知時，畫面右側會顯示任務內容；右鍵點擊該通知可開啟「巨商修練書」UI。','部分任務需完成所有階段任務，才算完成一項。','信用等級達 70 以上時，聊天視窗會顯示使用說明通知。']) }),
+        sec('如何開啟巨商修練書介面', { items: L(['按 ESC 打開系統目錄。','點擊下方「設定快選欄位」。','把「巨商修練書」圖示拉上去上方欄位，左下角要點「快選顯示」，完成後介面頂部會多出一行快選欄位。']) }),
+        sec('任務清單與已知獎勵', { table: T(['#', '任務', '獎勵'], [
+          ['1','一轉主','5000 萬經驗、1 萬信用度、雞湯 X10、不死神符 X10、縮地術 X1（15 天）'],
+          ['2','完成三個日任','3000 萬經驗、5000 信用度、週任牌 X15、飽食度粥 X20'],
+          ['3','跟市街左邊換一日娃娃嘅 NPC 對話','1000 萬經驗、5000 信用度、快捷拍賣所卷 X1（5 天）、雞湯 X10、不死神符 X10'],
+          ['4','完成白商會（五大神獸任）任務','5000 萬經驗（全體）、25000 信用度、限時娃娃 3 選 1'],
+          ['5','完成一個週任',''],['6','使用一個衣櫃',''],['7','使用掃蕩令',''],['8','持有一隻覺醒將帥',''],['9','完成玄武團任務',''],['10','出戰使用一隻精靈',''],
+          ['11','跟 NPC 何仙姑捉一次精靈',''],['12','完成白虎團任務',''],['13','主角裝備神獸符／生肖符',''],['14','達到 100 萬戰力',''],['15','進行一次時光劇情',''],['16','完成破奧任務',''],['17','完成尼泊爾任務',''],['18','持有一隻改造將帥',''],['19','升級精靈',''],['20','完成印度北部任務',''],
+          ['21','完成印度東部任務',''],['22','完成印度西部任務（提婆）',''],['23','完成印度南部任務（海岸）',''],['24','完成冰城任務',''],['25','完成帝陵任務',''],['26','達到 100 信用度',''],['27','持有一個陣法',''],['28','完成齊天大聖任務',''],['29','持有一隻神獸',''],['30','持有一隻天王','']], 640), note: '原頁只列出第 1–4 項獎勵。' })
+      ] },
+      { name: '傳送符', title: '傳送符', intro: '市街傳送符商人販售嘅傳送符，按國家同特殊地形分類。', blocks: T4 },
+      { name: '經驗兌換', title: '經驗兌換', intro: '共有 4 個 NPC，分佈喺 4 國不同位置。', blocks: [
+        sec('NPC 與兌換畫面', { text: '' }),
+        sec('4 國 NPC 位置', { text: '' }),
+        sec('兌換項目', { table: T(['費用', '兌換內容'], [['20 億','太皇裝（200 等）'],['100 億','孔明裝'],['1000 億','天羅裝']], 420) }),
+        sec('太皇裝（200 等）', { table: T(['部位', '數值'], [
+          ['太皇頭盔','力 50、敏 50、體 50、智 50、打抗 50%'],['太皇盔甲','力 100、敏 50、體 100、智 50、魔抗 50%、打抗 50%'],['太皇手套','力 100、敏 50、體 50'],['太皇腰帶','力 100、體 100、魔抗 50%'],['太皇鞋子','力 100、敏 100、打抗 40%'],['戒指','力 50、敏 50、體 50、智 50']], 520) }),
+        sec('套裝效果', { table: T(['件數', '效果'], [['3 件','智 50'],['3 件','防禦 1000'],['5 件','力 100'],['5 件','力 750'],['6 件','力 150'],['6 件','敏 300'],['—','體 350'],['—','智 200'],['—','打抗 140%'],['—','魔抗 100%']], 420), note: '原頁嘅件數同效果排版交錯，以上為原樣抄錄，件數與效果嘅對應請對照原頁。' })
+      ] },
+      { name: '戰鬥按鍵及技能系統', title: '戰鬥按鍵及技能系統說明', intro: '說明假設玩家嘅自定義按鍵為 R。技能系統分為「舊系統」同「技能連射系統 Rapid Fire（新）」，兩者各有好處同限制，可按需要切換。', blocks: [
+        sec('概念', { table: T(['概念', '解釋', '例子'], [
+          ['預約技能／動作','預先排列友軍接下來使用嘅技能或動作，透過 Ctrl 或 E（技能連射）進行。','命令麒麟接下來連續使用 10 次漩渦'],
+          ['快速施法 Keyboard Skills','範圍及指定技能按下對應按鍵後唔使再按左鍵確認，使用技能連射系統時強制生效。','按 R 鍵麒麟即使用漩渦'],
+          ['技能連射 Rapid Fire','新技能施放系統：按 E 一鍵預約技能，緊按自定義按鍵連續施放。部分副本及打段關卡無法一鍵預約，但仍可連續施放。','選擇麒麟並按 E，麒麟即預約使用漩渦'],
+          ['自定義按鍵 Skill Shortcuts','玩家自定義嘅施放技能按鍵；除系統保留嘅 Q、W、E、A、S、H、M 外，其他英文字母都可用。','用 R 鍵取代預設 F 鍵施放技能'],
+          ['統一施法','適用於所有技能系統，不需選擇單位即可一併使用預設好嘅技能；暫時只用於 Q、W（統一減益、統一召喚），無法預約。','進場後直接 QW，放置好台柱並對怪物使用主拍清音']], 700) }),
+        sec('戰鬥按鍵：舊系統 vs 新系統', { table: T(['按鍵', '舊系統（非技能連射）', '新系統（Rapid Fire）'], [
+          ['右鍵','快速施法，可預約，可部隊。點敵人：普攻；點地面：移動。','快速施法，不可預約，可部隊。功能同左。'],
+          ['A','可預約，可部隊。點敵人：普攻；點地面：移動，路徑上攻擊範圍有敵人則普攻至消滅；點友軍：普攻友軍（不造成傷害）。','快速施法，不可預約，可部隊。功能同左。'],
+          ['M','可預約，可部隊。點敵人：普攻；點地面：移動。','快速施法，不可預約，可部隊。'],
+          ['S','可預約，可部隊。中止任何動作直至下一個指令。','不可預約，可部隊。'],
+          ['H','可預約，可部隊。停止當前動作並靜止，攻擊範圍內有敵軍仍會普攻。','不可預約，可部隊。'],
+          ['~,1,2,…,0,-,=','選擇對應單位或部隊；再按一次將鏡頭移至單位。戰鬥中 Ctrl + 該鍵可重設，亦可設定召喚單位及敵方單位（不延續至下一場）。','同左'],
+          ['空白鍵','把鏡頭移至鏡頭外戰鬥中嘅單位（正在普攻或受傷害，召喚物亦生效）。組隊時只對該單位所屬玩家生效。','同左'],
+          ['R（自定義）','可預約，不可部隊。命令單位使用一次預設技能。','快速施法，可預約，不可部隊。緊按時不斷連續使用技能（最高速度），緊按中亦可選擇單位。Ctrl + R 與 E 廣義上一致。'],
+          ['Q','不可預約，無需選擇單位。預設單位一併使用預設減抗系技能：虛榮鎧甲、主拍清音、波動、波動震、鳳鳴、蛇石術。','同左'],
+          ['W','不可預約，無需選擇單位。一併使用預設召喚：熊貓、野獸、守護物、黑龍、獨角鬼、忍者、娃娃、龜甲車、弩車、弓手、西洋槍手、玄武、火神、女忍、沙兵等。','同左'],
+          ['E','可預約，不可部隊。命令單一預設單位使用預設技能，功能與自定義按鍵（R）一致。','快速施法，必定預約，不可部隊。預約次數 = 單位當前 MP ÷ 技能消耗 MP，中途回魔不影響次數。速度約為最高速度嘅 66%。']], 860) })
+      ] },
+      { name: '屬性值詳解', title: '屬性值詳解', intro: '由象冥版本開始，巨商引入屬性值系統。', blocks: [
+        sec('官方說明', { items: L([
+          '有屬性嘅角色同怪物增加咗屬性值。',
+          '主角特性、陣型陣法、屬性裝備原有嘅屬性傷害，變更為屬性值。',
+          '隨著火、水、雷、風屬性相性不同，從 20% 傷害增減效果，依據屬性值差異變更為傷害增減效果。',
+          '地屬性給予所有屬性傷害增加 5%，並維持從火、水、雷、風屬性獲得嘅傷害 30% 增加效果。',
+          '原先火、水、雷、風屬性角色與怪物屬性值設定為 20，地屬性設定為 5，與既有怪物傷害無變動，但新增部分怪物依屬性值有傷害差異。',
+          '火、水、雷、風攻擊有利屬性時，若屬性值比被攻擊者高或相同，依自己嘅屬性值增加 % 傷害。',
+          '攻擊有利屬性時，若屬性值比被攻擊者低，會從攻擊者屬性值中剝奪一半嘅屬性值差異，並增加 % 傷害（若結果低於 0，則減少相同傷害）。',
+          '屬性相同或攻擊相性無關聯嘅屬性時，若屬性值比被攻擊者高或相同，傷害無變化。',
+          '屬性相同或攻擊相性無關聯嘅屬性時，若屬性值比被攻擊者低，減少「屬性值差異 × 1.5」% 傷害。',
+          '攻擊不利嘅屬性時，依被攻擊者嘅屬性值減少 % 傷害。',
+          '依屬性公式，當傷害減少 100% 以上時，給 0 傷害。']) , note: '原頁附有簡易屬性值計算器（Google 試算表連結）。' }),
+        sec('詳細計算（以虎天，基礎傷害約 2142–2146 為例）', { items: L([
+          '打剋屬嘅怪，我嘅屬性值高於或等於怪物：每 1 點屬性值 = 多 1% 傷害。\n· 20 屬性值打無屬性怪：2142–2146\n· 20 屬性值打 3 尾（20）：2570（2142 + 2142×0.2）\n· 25 屬性值打 3 尾（20）：2682\n· 40 屬性值打 3 尾（20）：3001',
+          '打剋屬嘅怪，我嘅屬性值低於怪物：\n· 20 屬性值打道士氣（雷，50）：50−20 = 30，÷2 = 15，20−15 = 5%，傷害 2253\n· 25 屬性值打道士氣（50）：25÷2 = 12.5 → 12.5%，傷害 2412\n· 30 屬性值打道士氣（50）：20%，傷害 2572\n· 20 屬性值打道士角（雷，90）：90−20 = 70，÷2 = 35，20−35 = −15%，傷害 1823',
+          '打被剋屬嘅怪：\n· 打 90 屬性值火怪：2144 − 2144×0.9 = 214\n· 打 50 屬性值火怪：1072\n· 打 100 屬性值火怪：0',
+          '打互相無剋屬嘅怪：\n· 屬性值比怪物高：無任何加成（30 屬性值虎天打水象 20：2143）\n· 屬性值比怪物低：70−20 = 50，×1.5 = 75%，2144 − 2144×0.75 = 536；25 屬性值：45×1.5 = 67.5%，696',
+          '土屬性：印男打無屬怪傷 1165；印男（國籍 5 + 土屬 3 + 屬套 6 = 14 屬）打 3 尾（20 屬）= 1164 + 1164×0.14 = 1326；打 90 屬火怪 1328；打 120 屬雷怪 1326。']) }),
+        sec('增加屬性值嘅方法', { table: T(['來源', '數值'], [
+          ['任何覺醒屬性天王','40'],['任何屬性天王／明王／將帥自帶','20'],['屬性陣法（火／水／風／雷）','5'],['屬性護腕 + 護腿 +5／高級屬性護腕 + 護腿 +5','10／16'],['天王符（召喚期間內）','5'],['明王符（召喚期間內，明王移轉目標為 X 屬性時）','5'],['2 轉主角國籍','5'],['天王套裝 6 件效果','5（土屬只 +3）'],['明王套裝 6 件效果','7（土屬只 +4）'],['手腰鞋上齊 3 件 BigDipper 石','對應屬性值 +2'],['明王武器（接受參數移轉對象為對應屬性時）','5'],['高級明王武器（國巨未實裝）','10'],['獨角鬼氣息／雪女氣息／貪火','1／2／3（加隊友 5 + 扣怪物 3，或加隊友 3 + 扣怪物 5）'],['新土傳','—'],['紫色龍珠（只限主角，國巨未實裝）','2'],['星座達 100 星力值後','5'],['星座達 280 星力值後（國巨未實裝）','10']], 560),
+          note: '按 12/2/2024 國巨最新版本：天王最多 82 屬性值；明王最多 77（不含土屬）；傳說將帥／主角最多 77（不含土屬）。' })
+      ] },
+      { name: '抗性屬性傷害速查表', title: '抗性屬性傷害及增益速查表', intro: '快速比較各種兵陣配置嘅傷害差異。由屬性剋制產生嘅傷害減免最多 90%，敵我雙方適用。所有傭兵擁有基礎 20 點屬性值。', blocks: [
+        sec('抗性與屬性傷害計算器', { calc: true }),
+        sec('抗性減傷率', { text: '有效抗性為 260 或以上時不再增加，減傷率為 98.6%。\n下表按原表規律列出（減傷率 = 57% + 0.16% × 有效抗性）。原頁為 0–260 逐點列表。', table: T(['目標有效抗性', '抗性減傷率', '有效傷害'], resRows, 420) }),
+        sec('剋制屬性傷害計算公式', { text: '原始傷害 = 100% + 屬性值\n傷害減少率 = 屬性相差 ÷ 2（最低 0%）\n有效傷害 = 原始傷害 − 傷害減少率\n有效傷害比率 = 100% + (有效傷害 − 原始傷害) ÷ 原始傷害\n\n例：我方屬性值 50，對方 90 → 原始傷害 150%，傷害減少率 20%，有效傷害 130%，比率 86.66%（對方只受原本 86.66% 傷害）。\n提升 5 點（55）→ 有效傷害 137.5%，比率 88.71%。\n新傷害增幅 = (88.71% − 86.66%) ÷ 86.88%，即提升 5 點屬性值後，傷害提高約 2.36%。' }),
+        sec('影響屬性值', { table: T(['來源', '效果'], [
+          ['屬性手鏈（+5）','屬性值 +5（土屬 +3）'],['屬性綁腿（+5）','屬性值 +5（土屬 +3）'],['死神手鏈（+5）','屬性值 +7'],['死神綁腿（+5）','屬性值 +7'],['天王符','+5'],['屬性陣法','+5'],['二轉主角（相同屬性）','+5'],['天王裝六件套','+5（土屬 +3）'],['冥王裝六件套','+7（土屬 +4）'],['大波上石 BBG 套','+2'],['冥王武','+5（土屬 +3）'],['高級冥王武','+10'],['冥王符','+5'],['哥布林鬼火','+1'],['雪女火','+2'],['阿克巴大帝（沙兵）','+5（每 2 級特性 +1）'],['100 星值','+5'],['280 星值','+10'],['附魔','+5']], 520) }),
+        sec('影響打抗', { table: T(['來源', '效果'], [
+          ['廣目天王','打抗 −15／−8（特性 7 級時）'],['大威德天王','−10'],['明男／朝男／台女／日男','−10（每級特性 −2）'],['朱雀武器','−15'],['不動明王','−20'],['不動明王武器','−25'],['阿朱那（弩炮）','−25'],['覺醒阿莫','−6'],['虛榮甲胄','−51'],['虛榮甲胄（強）','−61']], 520) }),
+        sec('影響法抗', { table: T(['來源', '效果'], [
+          ['持國天王','法抗 −15／−8（特性 7 級時）'],['明男／朝男／台女／日男','−10（每級特性 −2）'],['朱雀武器','−15'],['不動明王','−20'],['不動明王武器','−25'],['軍茶利明王（對天）','−10'],['花木蘭（對天）','−10／−7（特性 7 級時）'],['崔茂宣／媽祖','−15／−8（特性 7 級時）'],['覺醒阿莫','−6'],['戰鳳丸','−10'],['楠達德維（蛇女）','−10'],['主拍清音','−51'],['主拍清音（強）','−61']], 520), note: '原頁另有「龜天扣抗屬值公式應用表」，匯出檔嘅表格內容係空白（只剩標題、綠色可改數字嘅格仔同多聞天王頭像），所以最頂用計算器取代。' })
+      ] }
+    ];
+    // ---- 圖片 ----
+    const U = (id) => 'blob/' + id + '.jpg';
+    const C = ['759ba6c2dad2287f480900d7be64cbfe','221394c43de5b89d1958df977d846d7d','c262ade4906d655221af0a47506dbfa6','ae1628996484c452069fd988a3d97448','7bb0d9be0e6a88e31439e3ceb9774f5c','ebbe4ec4eb2426aaffcc92dfa9f6ef02','45699b73143617e3777466576628490a','6d589e248fb0bfc0b0d96a4df935bd84','3e699e2687ca2dc7cb4c51013e734996','82d94f1b8982ea1f42cc9fcf2daf92cf','66875ef502fda2566b3371200835d982','635132ad30c2c7ee2ca4676c9b13e898','7b219950792d02c6409defb756cd300c','ca7489fa40ad7c874ca355277be749e9','ee59f8169db94a161b4fdff149d7b9aa','6d2f68310e4bc779ece4c12bbf702ebb','82ca71d6fd838483c2005e53fa0de3af','213e29301270193de2b34f3462a77c39','483e3fb54829d43623b5cb4d4e900c8a','f062fc8207d1ce70d3dcc298df5a46fe','2d93241acf513bc2f758af4dc7394d0a','d7a88432ca7e6abb63a3fa7a4771a4bc','e8296839d4c5bf1260060f7a3221aa8b'];
+    const E = ['961ba8ff8f0d517ff7d5a67ea153d5df','6f88905b0f9301dfdc2aa790b4834629','b9beb781574380fef37bbd08f733eafd','41422e4c6fddcfc654ddeaa652ce6148','2b77624d652ab47b200a7f509c77c2b6','aca58d91093ff8048f393a2ff6b84601','955ec2319734c726907334af6e7cef16','11ceed210cda4156fb37c3feb2a34319'];
+    const g = (arr, caps) => arr.map((id, k) => ({ u: U(id), cap: caps ? caps[k] : '' }));
+    const IM = {
+      '1. 去神仙谷捉精靈': g([C[0], C[1], C[2], C[3]], ['NPC 地點','捉精靈介面','介面截圖','介面截圖']),
+      '2. 商團 Recall 技能': g([C[4]], ['Party Recall 按鈕']),
+      '3. 朝女特性：賣物品及傳送': g([C[5]], ['朝女特性']),
+      '4. 入戰鬥後按 Tab': g([C[6]], ['按 Tab 前後小地圖']),
+      '5. Game Setting 功能': g([C[7]], ['Game Setting']),
+      '6. Victory Coin 用途': g([C[8], C[9], C[10], C[11]], ['', '', '', '']),
+      '7. 快速傳送': g([C[12], C[13], C[14]], ['', '', '']),
+      '8. 更換 Trade / Rejected': g([C[15]], ['Trade / Rejected']),
+      '10. 卡任務傳送': g([C[16]], ['']),
+      '11. 升等時應該吃哪些藥？': g([C[17]], ['']),
+      '12. 隨身客棧': g([C[18]], ['']),
+      '13. 防外掛系統': g([C[19]], ['防外掛畫面']),
+      '14. 拍賣所卷': g([C[20]], ['']),
+      '15. 包袱背包與英雄靈魂石': g([C[21], C[22]], ['包袱背包', '公墓管理員']),
+      '使用規則': g(['3493078b119370b8b0cabe5189267aa4', '74549360c3b7313f1e19a5802372dbb8'], ['NPC 位置（市街 4 點方向）', '傳送符商人']),
+      '基礎說明': g(['291f7ed39ee9dffc020cd334acb0b9c4'], ['']),
+      '如何開啟巨商修練書介面': g(['55547586039e79db7e363aa8bcde5a3c'], ['']),
+      '官方說明': g(['46cad06d5c0dd37bf40ee030409479f9'], ['']),
+      'NPC 與兌換畫面': g([E[0], E[1], E[2], E[3]], ['選 Item exchange', '20 億（太皇裝）', '100 億（孔明裝）', '1000 億（天羅裝）']),
+      '4 國 NPC 位置': g([E[4], E[5], E[6], E[7]], ['台灣', '中國', '朝鮮', '日本'])
+    };
+
+    // ---- 計算器 ----
+    const S = this.state;
+    const n = (v) => { const x = parseFloat(v); return isNaN(x) ? 0 : x; };
+    const mobRes = n(S.mobRes), cut = n(S.cut), mine = n(S.mine), theirs = n(S.theirs), base = n(S.base);
+    const effRes = Math.min(260, Math.max(0, mobRes - cut));
+    const reduction = 57 + 0.16 * effRes;
+    const pass = 100 - reduction;
+    let attr;
+    if (S.mode === 'beat') attr = mine >= theirs ? 1 + mine / 100 : 1 + (mine - (theirs - mine) / 2) / 100;
+    else if (S.mode === 'neutral') attr = mine >= theirs ? 1 : 1 - 1.5 * (theirs - mine) / 100;
+    else attr = 1 - theirs / 100;
+    attr = Math.max(0, attr);
+    const mult = attr * pass / 100;
+    const f = (k, label, key) => ({ label, value: S[key], on: (e) => this.setState({ [key]: e.target.value }) });
+    const modeDefs = [['beat', '我剋制對方屬性'], ['neutral', '雙方無剋制關係'], ['beaten', '我被對方屬性剋制']];
+    const calc = {
+      portrait: U('ceb9a786e7ec5d51025f0d20e25792c8'),
+      modes: modeDefs.map(([k, name]) => ({ name, pick: () => this.setState({ mode: k }), bg: S.mode === k ? '#d2553a' : '#1c2328', fg: S.mode === k ? '#14181c' : '#e8e4da', border: S.mode === k ? '#d2553a' : '#3a444c' })),
+      fields: [f(0, '怪物抗性（打抗／法抗）', 'mobRes'), f(0, '我方降抗總和', 'cut'), f(0, '我方屬性值', 'mine'), f(0, '怪物屬性值', 'theirs'), f(0, '無屬性基礎傷害（可選）', 'base')],
+      results: [
+        { k: '有效抗性', v: effRes.toFixed(0), color: '#e8e4da' },
+        { k: '抗性減傷率', v: reduction.toFixed(2) + '%', color: '#c9a24b' },
+        { k: '抗性後剩餘傷害', v: pass.toFixed(2) + '%', color: '#e8e4da' },
+        { k: '屬性傷害倍率', v: (attr * 100).toFixed(1) + '%', color: '#c9a24b' },
+        { k: '綜合傷害倍率', v: (mult * 100).toFixed(2) + '%', color: '#d2553a' },
+        { k: '預計單次傷害', v: Math.round(base * mult).toLocaleString('en-GB'), color: '#d2553a' }
+      ]
+    };
+
+    this._N = TABS.map((x) => x.name);
+    this._A = TABS.map((x) => x.title);
+    const i = this.state.i != null ? this.state.i : this.tabFromHash();
+    const tabs = TABS.map((x, j) => ({ name: x.name, pick: () => { location.hash = encodeURIComponent(x.name); },
+      bg: j === i ? '#d2553a' : '#1c2328', fg: j === i ? '#14181c' : '#e8e4da', border: j === i ? '#d2553a' : '#3a444c' }));
+    const t = TABS[i];
+    const cur = { title: t.title, intro: t.intro, blocks: t.blocks.map((b) => ({
+      h: b.h, text: b.text || '', hasText: !!b.text,
+      items: b.items || [], hasItems: !!b.items,
+      hasTable: !!b.table, head: b.table ? b.table.head : [], rows: b.table ? b.table.rows : [], minW: b.table ? b.table.minW : 300,
+      imgs: IM[b.h] || [], hasImgs: !!IM[b.h], hasCalc: !!b.calc, calc: b.calc ? calc : { portrait: '', modes: [], fields: [], results: [] },
+      note: b.note || '', hasNote: !!b.note })) };
+    return { tabs, cur };
+  }
+}
+</script>
+</body>
+</html>
