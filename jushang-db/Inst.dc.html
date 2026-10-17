@@ -5,6 +5,7 @@
 <title>副本與活動</title>
 <script src="./support.js"></script>
 <script src="./highlight.js"></script>
+<script src="./page-search.js"></script>
 <script src="./Inst-data.js"></script>
 </head>
 <body>
@@ -24,6 +25,7 @@ a{color:#c9a24b}a:hover{color:#e8e4da}
     <h1 style="margin:0;font-family:'Noto Serif TC',serif;font-weight:900;font-size:56px;line-height:1.1">{{cur.name}}</h1>
     <p style="margin:0;font-size:15px;line-height:1.7;color:#8a949b">內容同圖片按原頁表格逐行整理，數值同文字照原頁抄錄。</p>
   </header>
+  <div id="page-search-slot"></div>
 
   <div style="display:flex;flex-wrap:wrap;gap:8px">
     <sc-for list="{{tabs}}" as="t" hint-placeholder-count="13">

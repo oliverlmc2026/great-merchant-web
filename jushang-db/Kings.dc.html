@@ -5,6 +5,7 @@
 <title>四天王</title>
 <script src="./support.js"></script>
 <script src="./highlight.js"></script>
+<script src="./page-search.js"></script>
 </head>
 <body>
 <x-dc>
@@ -23,6 +24,7 @@ a{color:#c9a24b}a:hover{color:#e8e4da}
     <h1 style="margin:0;font-family:'Noto Serif TC',serif;font-weight:900;font-size:60px;line-height:1.1">四天王</h1>
     <p style="margin:0;font-size:17px;line-height:1.7;color:#aab2b8;max-width:720px">四位天王各有兩條特性（每條最高 10 點）。揀一位天王睇雇用材料、基本數值、範圍同傷害公式。</p>
   </header>
+  <div id="page-search-slot"></div>
 
   <div style="display:flex;flex-wrap:wrap;gap:10px">
     <sc-for list="{{tabs}}" as="t" hint-placeholder-count="4">

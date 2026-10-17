@@ -5,6 +5,7 @@
 <title>兇獸</title>
 <script src="./support.js"></script>
 <script src="./highlight.js"></script>
+<script src="./page-search.js"></script>
 </head>
 <body>
 <x-dc>
@@ -23,6 +24,7 @@ a{color:#c9a24b}a:hover{color:#e8e4da}
     <h1 style="margin:0;font-family:'Noto Serif TC',serif;font-weight:900;font-size:60px;line-height:1.1">兇獸</h1>
     <p style="margin:0;font-size:17px;line-height:1.7;color:#aab2b8;max-width:760px">四國各有一隻兇獸，另有可覺醒版本。覺醒兇獸不限國籍，需信用等級 100 或以上，紅利為兇獸總屬性的 1/10。</p>
   </header>
+  <div id="page-search-slot"></div>
 
   <div style="display:flex;flex-wrap:wrap;gap:10px">
     <sc-for list="{{tabs}}" as="t" hint-placeholder-count="4">
