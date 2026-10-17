@@ -3,6 +3,7 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -15,7 +16,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  check-search-index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Rebuild search index
+        run: node scripts/build-search-index.js
+      - name: Fail if search-data.js is stale
+        run: |
+          if ! git diff --exit-code --stat -- jushang-db/search-data.js; then
+            echo "::error file=jushang-db/search-data.js::Search index is out of date. Run 'node scripts/build-search-index.js' and commit jushang-db/search-data.js."
+            exit 1
+          fi
+
   deploy:
+    needs: check-search-index
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
