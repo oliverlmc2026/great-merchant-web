@@ -90,6 +90,12 @@ a{color:#c9a24b}a:hover{color:#e8e4da}
             <p style="margin:0;font-size:13px;line-height:1.7;color:#8a949b">抗性減傷率 = 57% + 0.16% × 有效抗性（有效抗性 = 怪物抗性 − 降抗，限 0–260）。屬性：剋制時，我方屬性值 ≥ 對方則加成 = 我方屬性值%；低於則加成 = 我方 − (對方 − 我方) ÷ 2；無關係且我方較低則減 (差 × 1.5)%；被剋則減對方屬性值%。結果最低 0。呢個係按頁面公式重建嘅計算器，唔係原試算表嘅複製。</p>
           </div>
         </sc-if>
+        <sc-if value="{{b.hasVideo}}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="position:relative;width:100%;aspect-ratio:16/9;border:1px solid #3a444c;border-radius:6px;overflow:hidden;background:#0e1114"><iframe src="{{b.videoEmbed}}" title="{{b.h}}" loading="lazy" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe></div>
+            <a href="{{b.videoUrl}}" target="_blank" rel="noopener" style="font-size:15px;font-weight:700;color:#d2553a">喺 YouTube 開啟影片 ↗</a>
+          </div>
+        </sc-if>
         <sc-if value="{{b.hasNote}}" hint-placeholder-val="{{ false }}">
           <p style="margin:0;font-size:14px;line-height:1.7;color:#d2553a;white-space:pre-line">{{b.note}}</p>
         </sc-if>
@@ -239,6 +245,10 @@ class Component extends DCLogic {
           ['廣目天王','打抗 −15／−8（特性 7 級時）'],['大威德天王','−10'],['明男／朝男／台女／日男','−10（每級特性 −2）'],['朱雀武器','−15'],['不動明王','−20'],['不動明王武器','−25'],['阿朱那（弩炮）','−25'],['覺醒阿莫','−6'],['虛榮甲胄','−51'],['虛榮甲胄（強）','−61']], 520) }),
         sec('影響法抗', { table: T(['來源', '效果'], [
           ['持國天王','法抗 −15／−8（特性 7 級時）'],['明男／朝男／台女／日男','−10（每級特性 −2）'],['朱雀武器','−15'],['不動明王','−20'],['不動明王武器','−25'],['軍茶利明王（對天）','−10'],['花木蘭（對天）','−10／−7（特性 7 級時）'],['崔茂宣／媽祖','−15／−8（特性 7 級時）'],['覺醒阿莫','−6'],['戰鳳丸','−10'],['楠達德維（蛇女）','−10'],['主拍清音','−51'],['主拍清音（強）','−61']], 520), note: '原頁另有「龜天扣抗屬值公式應用表」，匯出檔嘅表格內容係空白（只剩標題、綠色可改數字嘅格仔同多聞天王頭像），所以最頂用計算器取代。' })
+      ] },
+      { name: '半價合傳說將', title: '半價合傳說將', intro: '以半價合成傳說將帥嘅方法，詳見下方影片。', blocks: [
+        sec('教學影片', { video: '3hPKSigGo3g', note: '⚠ 提醒：每個角色只限一次。' }),
+        sec('注意事項', { items: L(['每個角色只限一次半價合傳機會，用過就冇。']) })
       ] }
     ];
     // ---- 圖片 ----
@@ -308,6 +318,7 @@ class Component extends DCLogic {
       items: b.items || [], hasItems: !!b.items,
       hasTable: !!b.table, head: b.table ? b.table.head : [], rows: b.table ? b.table.rows : [], minW: b.table ? b.table.minW : 300,
       imgs: IM[b.h] || [], hasImgs: !!IM[b.h], hasCalc: !!b.calc, calc: b.calc ? calc : { modes: [], fields: [], results: [] },
+      hasVideo: !!b.video, videoEmbed: b.video ? 'https://www.youtube-nocookie.com/embed/' + b.video : '', videoUrl: b.video ? 'https://www.youtube.com/watch?v=' + b.video : '',
       note: b.note || '', hasNote: !!b.note })) };
     return { tabs, cur };
   }
