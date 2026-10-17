@@ -68,7 +68,6 @@ a{color:#c9a24b}a:hover{color:#e8e4da}
         <sc-if value="{{b.hasCalc}}" hint-placeholder-val="{{ false }}">
           <div style="display:flex;flex-direction:column;gap:20px">
             <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
-              <img src="{{b.calc.portrait}}" alt="多聞天王 Vaisravana" style="width:89px;height:115px;border:1px solid #3a444c;border-radius:6px">
               <p style="margin:0;flex:1 1 320px;font-size:15px;line-height:1.8;color:#c3c9ce">輸入怪物抗性、你方降抗總和、雙方屬性值同無屬性基礎傷害，即時計算扣抗後同屬性加減成後嘅預計傷害。公式取自本頁同「屬性值詳解」。</p>
             </div>
             <div style="display:flex;flex-wrap:wrap;gap:10px">
@@ -286,7 +285,6 @@ class Component extends DCLogic {
     const f = (k, label, key) => ({ label, value: S[key], on: (e) => this.setState({ [key]: e.target.value }) });
     const modeDefs = [['beat', '我剋制對方屬性'], ['neutral', '雙方無剋制關係'], ['beaten', '我被對方屬性剋制']];
     const calc = {
-      portrait: U('ceb9a786e7ec5d51025f0d20e25792c8'),
       modes: modeDefs.map(([k, name]) => ({ name, pick: () => this.setState({ mode: k }), bg: S.mode === k ? '#d2553a' : '#1c2328', fg: S.mode === k ? '#14181c' : '#e8e4da', border: S.mode === k ? '#d2553a' : '#3a444c' })),
       fields: [f(0, '怪物抗性（打抗／法抗）', 'mobRes'), f(0, '我方降抗總和', 'cut'), f(0, '我方屬性值', 'mine'), f(0, '怪物屬性值', 'theirs'), f(0, '無屬性基礎傷害（可選）', 'base')],
       results: [
@@ -309,7 +307,7 @@ class Component extends DCLogic {
       h: b.h, text: b.text || '', hasText: !!b.text,
       items: b.items || [], hasItems: !!b.items,
       hasTable: !!b.table, head: b.table ? b.table.head : [], rows: b.table ? b.table.rows : [], minW: b.table ? b.table.minW : 300,
-      imgs: IM[b.h] || [], hasImgs: !!IM[b.h], hasCalc: !!b.calc, calc: b.calc ? calc : { portrait: '', modes: [], fields: [], results: [] },
+      imgs: IM[b.h] || [], hasImgs: !!IM[b.h], hasCalc: !!b.calc, calc: b.calc ? calc : { modes: [], fields: [], results: [] },
       note: b.note || '', hasNote: !!b.note })) };
     return { tabs, cur };
   }
