@@ -56,6 +56,22 @@
     };
     [label, cntEl, prev, next, close].forEach(function (e) { pill.appendChild(e); });
     document.body.appendChild(pill);
+    placePill();
+    addEventListener('scroll', placePill, { passive: true });
+    addEventListener('resize', placePill);
+  }
+
+  // keep the pill just below whichever sticky toolbar parts (nav, search, tabs) are pinned at the top
+  function placePill() {
+    if (!pill) return;
+    var bottom = 0;
+    ['page-nav', 'page-search-slot', 'page-tabs'].forEach(function (id) {
+      var e = document.getElementById(id);
+      if (!e) return;
+      var r = e.getBoundingClientRect();
+      if (r.top < 150 && r.bottom > bottom) bottom = r.bottom;
+    });
+    pill.style.top = Math.max(16, bottom + 8) + 'px';
   }
 
   function showCurrent(scroll) {
@@ -84,7 +100,7 @@
     var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
       acceptNode: function (n) {
         var p = n.parentElement;
-        if (!p || p.closest('script,style,input,textarea,#search-hit-pill')) return NodeFilter.FILTER_REJECT;
+        if (!p || p.closest('script,style,input,textarea,#search-hit-pill,#page-nav,#page-search-slot,#page-tabs')) return NodeFilter.FILTER_REJECT;
         return n.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
       }
     });

@@ -18,15 +18,15 @@ a{color:#c9a24b}a:hover{color:#e8e4da}
 </style>
 </helmet>
 <div style="width:100%;max-width:1280px;margin:0 auto;box-sizing:border-box;padding:56px 56px 96px;display:flex;flex-direction:column;gap:36px;background:#14181c">
-  <nav><a href="Main.dc.html" style="font-size:15px;font-weight:700">← 回到目錄</a></nav>
+  <nav id="page-nav" style="position:sticky;top:0;z-index:30;display:flex;align-items:center;height:44px;background:#14181c"><a href="Main.dc.html" style="font-size:15px;font-weight:700">← 回到目錄</a></nav>
   <header style="display:flex;flex-direction:column;gap:12px;border-bottom:1px solid #3a444c;padding-bottom:28px">
     <div style="font-size:14px;letter-spacing:0.3em;color:#c9a24b;font-weight:700">新手入門</div>
     <h1 style="margin:0;font-family:'Noto Serif TC',serif;font-weight:900;font-size:56px;line-height:1.1">{{cur.title}}</h1>
     <p style="margin:0;font-size:17px;line-height:1.7;color:#aab2b8;max-width:820px;white-space:pre-line">{{cur.intro}}</p>
   </header>
-  <div id="page-search-slot"></div>
+  <div id="page-search-slot" style="position:sticky;top:44px;z-index:29;height:52px;box-sizing:border-box;padding-bottom:8px;background:#14181c"></div>
 
-  <div style="display:flex;flex-wrap:wrap;gap:10px">
+  <div id="page-tabs" style="position:sticky;top:96px;z-index:28;display:flex;flex-wrap:wrap;gap:10px;padding:8px 0;background:#14181c;max-height:34vh;overflow-y:auto;border-bottom:1px solid #2c353c">
     <sc-for list="{{tabs}}" as="t" hint-placeholder-count="8">
       <button onClick="{{t.pick}}" style="min-height:44px;padding:0 16px;border-radius:6px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;border:1px solid {{t.border}};background:{{t.bg}};color:{{t.fg}}">{{t.name}}</button>
     </sc-for>
