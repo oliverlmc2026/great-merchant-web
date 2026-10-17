@@ -92,7 +92,7 @@ class Component extends DCLogic {
     }
     const list = [...by.values()].sort((a, b) => (b.nameHit - a.nameHit) || (b.n - a.n));
     const results = list.slice(0, 40).map((g) => ({
-      href: g.p + '.dc.html#' + encodeURIComponent(g.t),
+      href: g.p + '.dc.html?q=' + encodeURIComponent(q.trim()) + '#' + encodeURIComponent(g.t),
       page: labels[g.p] || g.p, tab: g.t, count: g.n,
       snips: g.hits.map((x) => {
         const low = x.toLowerCase();
