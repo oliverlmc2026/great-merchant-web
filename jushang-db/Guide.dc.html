@@ -54,7 +54,8 @@ a{color:#c9a24b}a:hover{color:#e8e4da}
                 <sc-for list="{{r.cells}}" as="c" hint-placeholder-count="3">
                   <div style="min-width:0;box-sizing:border-box;background:{{r.bg}};padding:8px 12px;font-size:14px;line-height:1.7;color:{{r.fg}};font-weight:{{r.fw}};display:flex;align-items:center;gap:8px;flex-wrap:wrap">
                     <sc-for list="{{c.imgs}}" as="im" hint-placeholder-count="1"><img src="{{im}}" alt="" loading="lazy" style="height:{{g.imgH}}px;width:auto;max-width:100%;border-radius:4px;background:#0e1114"></sc-for>
-                    <span style="white-space:pre-line;overflow-wrap:anywhere;min-width:0">{{c.t}}</span>
+                    <sc-if value="{{c.href}}"><a href="{{c.href}}" target="_blank" rel="noopener noreferrer" style="white-space:pre-line;overflow-wrap:anywhere;min-width:0;color:#c9a24b;text-decoration:underline">{{c.t}}</a></sc-if>
+                    <sc-if value="{{!c.href}}"><span style="white-space:pre-line;overflow-wrap:anywhere;min-width:0">{{c.t}}</span></sc-if>
                   </div>
                 </sc-for>
               </div>
@@ -92,7 +93,7 @@ class Component extends DCLogic {
         rows: g.rows.map((r, k) => {
           const hdr = g.th && k === 0;
           return { bg: hdr ? '#2a343b' : '#181e22', fg: hdr ? '#c9a24b' : '#c3c9ce', fw: hdr ? 700 : 400,
-            cells: r.map((c) => ({ t: c.t, imgs: c.i.map((f) => 'dex/' + f) })) };
+            cells: r.map((c) => ({ t: c.t, href: /^https?:\/\/\S+$/.test(c.t.trim()) ? c.t.trim() : '', imgs: c.i.map((f) => 'dex/' + f) })) };
         })
       };
     });
