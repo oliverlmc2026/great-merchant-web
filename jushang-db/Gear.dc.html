@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<title>裝備圖鑑</title>
+<script src="./support.js"></script>
+<script src="./highlight.js"></script>
+<script src="./page-search.js"></script>
+<script src="./Gear-data.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#14181c;font-family:'Noto Sans TC',sans-serif;color:#e8e4da}
+a{color:#c9a24b}a:hover{color:#e8e4da}
+</style>
+</helmet>
+<div style="width:100%;max-width:1280px;margin:0 auto;box-sizing:border-box;padding:56px 56px 96px;display:flex;flex-direction:column;gap:32px;background:#14181c">
+  <nav id="page-nav" style="position:sticky;top:0;z-index:30;display:flex;align-items:center;height:44px;background:#14181c"><a href="Main.dc.html" style="font-size:15px;font-weight:700">← 回到目錄</a></nav>
+  <header style="display:flex;flex-direction:column;gap:12px;border-bottom:1px solid #3a444c;padding-bottom:28px">
+    <div style="font-size:14px;letter-spacing:0.3em;color:#c9a24b;font-weight:700">裝備圖鑑</div>
+    <h1 style="margin:0;font-family:'Noto Serif TC',serif;font-weight:900;font-size:56px;line-height:1.1">{{cur.name}}</h1>
+    <p style="margin:0;font-size:15px;line-height:1.7;color:#8a949b">gersangelacal.com 裝備圖鑑：各部位裝備能力、套裝效果與取得方法。 內容整理自個人知識庫。</p>
+  </header>
+  <div id="page-search-slot" style="position:sticky;top:44px;z-index:29;height:52px;box-sizing:border-box;padding-bottom:8px;background:#14181c"></div>
+
+  <div id="page-tabs" style="position:sticky;top:96px;z-index:28;display:flex;flex-wrap:wrap;gap:8px;padding:8px 0;background:#14181c;max-height:34vh;overflow-y:auto;border-bottom:1px solid #2c353c">
+    <sc-for list="{{tabs}}" as="t" hint-placeholder-count="13">
+      <button onClick="{{t.pick}}" style="min-height:44px;padding:0 14px;border-radius:6px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;border:1px solid {{t.border}};background:{{t.bg}};color:{{t.fg}}">{{t.name}}</button>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{cur.empty}}" hint-placeholder-val="{{ false }}">
+    <p style="margin:0;font-size:16px;color:#aab2b8">此頁在原匯出檔入面冇內容。</p>
+  </sc-if>
+
+  <sc-if value="{{noData}}" hint-placeholder-val="{{ false }}">
+    <p style="margin:0;font-size:16px;color:#d2553a">資料未能載入。</p>
+  </sc-if>
+
+  <div style="display:flex;flex-direction:column;gap:18px">
+    <sc-for list="{{cur.groups}}" as="g" hint-placeholder-count="3">
+      <section style="display:flex;flex-direction:column;gap:12px;padding:20px;background:#1c2328;border:1px solid #2c353c;border-radius:8px">
+        <sc-if value="{{g.hasTitle}}" hint-placeholder-val="{{ true }}">
+          <h2 style="margin:0;font-family:'Noto Serif TC',serif;font-weight:600;font-size:22px;color:#e8e4da">{{g.title}}</h2>
+        </sc-if>
+        <div style="overflow-x:auto;border:1px solid #2c353c;border-radius:6px">
+          <div style="display:flex;flex-direction:column;gap:1px;background:#2c353c;min-width:{{g.minW}}px">
+            <sc-for list="{{g.rows}}" as="r" hint-placeholder-count="3">
+              <div style="display:grid;grid-template-columns:{{g.cols}};gap:1px">
+                <sc-for list="{{r.cells}}" as="c" hint-placeholder-count="3">
+                  <div style="min-width:0;box-sizing:border-box;background:{{r.bg}};padding:8px 12px;font-size:14px;line-height:1.7;color:{{r.fg}};font-weight:{{r.fw}};display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <sc-for list="{{c.imgs}}" as="im" hint-placeholder-count="1"><img src="{{im}}" alt="" loading="lazy" style="height:{{g.imgH}}px;width:auto;max-width:100%;border-radius:4px;background:#0e1114"></sc-for>
+                    <span style="white-space:pre-line;overflow-wrap:anywhere;min-width:0">{{c.t}}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </section>
+    </sc-for>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); const D = (typeof window !== 'undefined' && window.UNITS_DATA) || []; const idx = () => Math.max(0, D.findIndex((x) => x.name === decodeURIComponent(location.hash.slice(1)))); this.state = { i: idx() }; window.addEventListener('hashchange', () => this.setState({ i: idx() })); }
+  renderVals() {
+    const D = (typeof window !== 'undefined' && window.UNITS_DATA) ? window.UNITS_DATA : [];
+    const i = Math.min(this.state.i, Math.max(0, D.length - 1));
+    const tabs = D.map((x, j) => ({ name: x.name, pick: () => { location.hash = encodeURIComponent(x.name); },
+      bg: j === i ? '#d2553a' : '#1c2328', fg: j === i ? '#14181c' : '#e8e4da', border: j === i ? '#d2553a' : '#3a444c' }));
+    const P = D[i] || { name: '', groups: [] };
+    const groups = P.groups.map((g) => {
+      const n = Math.max(...g.rows.map((r) => r.length));
+      const w = [];
+      for (let c = 0; c < n; c++) {
+        let m = 2, img = false;
+        g.rows.slice(0, 60).forEach((r) => { const x = r[c]; if (!x) return; if (x.i.length) img = true; m = Math.max(m, Math.min(x.t.length, 70)); });
+        w.push(img && m <= 2 ? 56 : Math.max(48, Math.min(m * 14 + 24, 520)));
+      }
+      const single = !g.th && n === 1;
+      return {
+        title: g.title, hasTitle: !!g.title,
+        cols: single ? 'minmax(0,1fr)' : w.map((x) => 'minmax(' + Math.min(x, 120) + 'px,' + x + 'fr)').join(' '),
+        minW: single ? 0 : Math.min(w.reduce((a, b) => a + Math.min(b, 120), 0), 1100),
+        imgH: 40,
+        rows: g.rows.map((r, k) => {
+          const hdr = g.th && k === 0;
+          return { bg: hdr ? '#2a343b' : '#181e22', fg: hdr ? '#c9a24b' : '#c3c9ce', fw: hdr ? 700 : 400,
+            cells: r.map((c) => ({ t: c.t, imgs: c.i.map((f) => 'dex/' + f) })) };
+        })
+      };
+    });
+    return { tabs, cur: { name: P.name, groups, empty: groups.length === 0 }, noData: D.length === 0 };
+  }
+}
+</script>
+</body>
+</html>
