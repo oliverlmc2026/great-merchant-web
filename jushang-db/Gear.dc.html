@@ -86,8 +86,8 @@ class Component extends DCLogic {
       const single = !g.th && n === 1;
       return {
         title: g.title, hasTitle: !!g.title,
-        cols: single ? 'minmax(0,1fr)' : w.map((x) => 'minmax(' + Math.min(x, 120) + 'px,' + x + 'fr)').join(' '),
-        minW: single ? 0 : Math.min(w.reduce((a, b) => a + Math.min(b, 120), 0), 1100),
+        cols: single ? 'minmax(0,1fr)' : w.map((x) => 'minmax(' + Math.min(x, 260) + 'px,' + x + 'fr)').join(' '),
+        minW: single ? 0 : Math.min(w.reduce((a, b) => a + Math.min(b, 260), 0), 1700),
         imgH: 40,
         rows: g.rows.map((r, k) => {
           const hdr = g.th && k === 0;
