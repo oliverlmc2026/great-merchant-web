@@ -41,6 +41,13 @@ a{color:#c9a24b}a:hover{color:#e8e4da}
     <p style="margin:0;font-size:16px;color:#d2553a">資料未能載入。</p>
   </sc-if>
 
+  <sc-if value="{{cur.filterable}}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <input type="search" value="{{fq}}" onInput="{{onFq}}" placeholder="搜尋呢個分頁：正式名稱、別名、英文名（多個字用空格分隔）" aria-label="搜尋別名和術語" style="min-height:48px;box-sizing:border-box;padding:0 16px;border-radius:8px;border:1px solid #c9a24b;background:#1c2328;color:#e8e4da;font-family:inherit;font-size:16px;outline:none">
+      <sc-if value="{{cur.fsum}}"><div style="font-size:14px;color:#aab2b8">{{cur.fsum}}</div></sc-if>
+    </div>
+  </sc-if>
+
   <div style="display:flex;flex-direction:column;gap:18px">
     <sc-for list="{{cur.groups}}" as="g" hint-placeholder-count="3">
       <section style="display:flex;flex-direction:column;gap:12px;padding:20px;background:#1c2328;border:1px solid #2c353c;border-radius:8px">
@@ -69,13 +76,26 @@ a{color:#c9a24b}a:hover{color:#e8e4da}
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props='{}'>
 class Component extends DCLogic {
-  constructor(p) { super(p); const D = (typeof window !== 'undefined' && window.UNITS_DATA) || []; const idx = () => Math.max(0, D.findIndex((x) => x.name === decodeURIComponent(location.hash.slice(1)))); this.state = { i: idx() }; window.addEventListener('hashchange', () => this.setState({ i: idx() })); }
+  constructor(p) { super(p); const D = (typeof window !== 'undefined' && window.UNITS_DATA) || []; const idx = () => Math.max(0, D.findIndex((x) => x.name === decodeURIComponent(location.hash.slice(1)))); this.state = { i: idx(), fq: '' }; window.addEventListener('hashchange', () => this.setState({ i: idx(), fq: '' })); }
   renderVals() {
     const D = (typeof window !== 'undefined' && window.UNITS_DATA) ? window.UNITS_DATA : [];
     const i = Math.min(this.state.i, Math.max(0, D.length - 1));
     const tabs = D.map((x, j) => ({ name: x.name, pick: () => { location.hash = encodeURIComponent(x.name); },
       bg: j === i ? '#d2553a' : '#1c2328', fg: j === i ? '#14181c' : '#e8e4da', border: j === i ? '#d2553a' : '#3a444c' }));
-    const P = D[i] || { name: '', groups: [] };
+    const P0 = D[i] || { name: '', groups: [] };
+    const filterable = P0.name === '別名和術語對照表';
+    const terms = filterable ? this.state.fq.toLowerCase().split(/\s+/).filter(Boolean) : [];
+    let P = P0, fsum = '';
+    if (terms.length) {
+      let hits = 0;
+      const fg = P0.groups.filter((g) => g.th).map((g) => {
+        const body = g.rows.slice(1).filter((r) => { const s = r.map((c) => c.t).join(' ').toLowerCase(); return terms.every((t) => s.includes(t)); });
+        hits += body.length;
+        return { ...g, rows: [g.rows[0], ...body], n: body.length };
+      }).filter((g) => g.n);
+      P = { name: P0.name, groups: fg };
+      fsum = hits ? '搵到 ' + hits + ' 筆相符（' + fg.length + ' 個分組）' : '搵唔到相符內容，試下用較短嘅關鍵字。';
+    }
     const groups = P.groups.map((g) => {
       const n = Math.max(...g.rows.map((r) => r.length));
       const w = [];
@@ -97,7 +117,8 @@ class Component extends DCLogic {
         })
       };
     });
-    return { tabs, cur: { name: P.name, groups, empty: groups.length === 0 }, noData: D.length === 0 };
+    return { tabs, cur: { name: P.name, groups, empty: groups.length === 0 && !terms.length, filterable, fsum }, noData: D.length === 0,
+      fq: this.state.fq, onFq: (e) => this.setState({ fq: e.target.value }) };
   }
 }
 </script>
