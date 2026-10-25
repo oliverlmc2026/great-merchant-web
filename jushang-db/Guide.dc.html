@@ -41,13 +41,6 @@ a{color:#c9a24b}a:hover{color:#e8e4da}
     <p style="margin:0;font-size:16px;color:#d2553a">資料未能載入。</p>
   </sc-if>
 
-  <sc-if value="{{cur.filterable}}" hint-placeholder-val="{{ false }}">
-    <div style="display:flex;flex-direction:column;gap:8px">
-      <input type="search" value="{{fq}}" onInput="{{onFq}}" placeholder="搜尋呢個分頁：正式名稱、別名、英文名（多個字用空格分隔）" aria-label="搜尋別名和術語" style="min-height:48px;box-sizing:border-box;padding:0 16px;border-radius:8px;border:1px solid #c9a24b;background:#1c2328;color:#e8e4da;font-family:inherit;font-size:16px;outline:none">
-      <sc-if value="{{cur.fsum}}"><div style="font-size:14px;color:#aab2b8">{{cur.fsum}}</div></sc-if>
-    </div>
-  </sc-if>
-
   <div style="display:flex;flex-direction:column;gap:18px">
     <sc-for list="{{cur.groups}}" as="g" hint-placeholder-count="3">
       <section style="display:flex;flex-direction:column;gap:12px;padding:20px;background:#1c2328;border:1px solid #2c353c;border-radius:8px">
@@ -70,6 +63,12 @@ a{color:#c9a24b}a:hover{color:#e8e4da}
           </div>
         </div>
       </section>
+      <sc-if value="{{g.search}}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <input type="search" value="{{g.search.fq}}" onInput="{{g.search.onFq}}" placeholder="搜尋呢個分頁：正式名稱、別名、英文名（多個字用空格分隔）" aria-label="搜尋別名和術語" style="min-height:48px;box-sizing:border-box;padding:0 16px;border-radius:8px;border:1px solid #c9a24b;background:#1c2328;color:#e8e4da;font-family:inherit;font-size:16px;outline:none">
+          <sc-if value="{{g.search.fsum}}"><div style="font-size:14px;color:#aab2b8">{{g.search.fsum}}</div></sc-if>
+        </div>
+      </sc-if>
     </sc-for>
   </div>
 </div>
@@ -93,10 +92,10 @@ class Component extends DCLogic {
         hits += body.length;
         return { ...g, rows: [g.rows[0], ...body], n: body.length };
       }).filter((g) => g.n);
-      P = { name: P0.name, groups: fg };
+      P = { name: P0.name, groups: [P0.groups[0], ...fg] };
       fsum = hits ? '搵到 ' + hits + ' 筆相符（' + fg.length + ' 個分組）' : '搵唔到相符內容，試下用較短嘅關鍵字。';
     }
-    const groups = P.groups.map((g) => {
+    const groups = P.groups.map((g, gi) => {
       const n = Math.max(...g.rows.map((r) => r.length));
       const w = [];
       for (let c = 0; c < n; c++) {
@@ -107,6 +106,7 @@ class Component extends DCLogic {
       const single = !g.th && n === 1;
       return {
         title: g.title, hasTitle: !!g.title,
+        search: filterable && gi === 0 ? { fq: this.state.fq, onFq: (e) => this.setState({ fq: e.target.value }), fsum } : null,
         cols: single ? 'minmax(0,1fr)' : w.map((x) => 'minmax(' + Math.min(x, 260) + 'px,' + x + 'fr)').join(' '),
         minW: single ? 0 : Math.min(w.reduce((a, b) => a + Math.min(b, 260), 0), 1700),
         imgH: 40,
@@ -117,8 +117,7 @@ class Component extends DCLogic {
         })
       };
     });
-    return { tabs, cur: { name: P.name, groups, empty: groups.length === 0 && !terms.length, filterable, fsum }, noData: D.length === 0,
-      fq: this.state.fq, onFq: (e) => this.setState({ fq: e.target.value }) };
+    return { tabs, cur: { name: P.name, groups, empty: groups.length === 0 }, noData: D.length === 0 };
   }
 }
 </script>
