@@ -28,7 +28,7 @@ a{color:#c9a24b}a:hover{color:#e8e4da}
   </header>
 
   <sc-if value="{{qs.on}}" hint-placeholder-val="{{ false }}">
-    <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="position:sticky;top:96px;z-index:28;display:flex;flex-direction:column;gap:10px;padding-bottom:8px;background:#14181c">
       <input type="search" value="{{qs.q}}" onInput="{{qs.onQ}}" placeholder="搜尋任務：中文或英文名，例如 探險千年湖、Wind from the West" aria-label="搜尋任務" style="min-height:52px;box-sizing:border-box;padding:0 18px;border-radius:8px;border:1px solid #c9a24b;background:#1c2328;color:#e8e4da;font-family:inherit;font-size:17px;outline:none">
       <sc-if value="{{qs.hasQ}}" hint-placeholder-val="{{ false }}">
         <div style="font-size:14px;color:#8a949b">{{qs.sum}}</div>
@@ -73,7 +73,7 @@ a{color:#c9a24b}a:hover{color:#e8e4da}
     <p style="margin:0;font-size:16px;color:#d2553a">資料未能載入。</p>
   </sc-if>
 
-  <div id="page-content" style="display:flex;flex-direction:column;gap:18px;scroll-margin-top:112px">
+  <div id="page-content" style="display:flex;flex-direction:column;gap:18px;scroll-margin-top:172px">
     <sc-if value="{{cur.hasMeta}}" hint-placeholder-val="{{ false }}">
       <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;background:#1f2b33;border:1px solid #33505f;border-radius:8px;font-size:17px;font-weight:700;color:#e8e4da">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="#c9a24b" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
@@ -81,7 +81,7 @@ a{color:#c9a24b}a:hover{color:#e8e4da}
       </div>
     </sc-if>
     <sc-for list="{{cur.groups}}" as="g" hint-placeholder-count="3">
-      <section id="{{g.id}}" style="scroll-margin-top:112px;display:flex;flex-direction:column;gap:12px;padding:20px;background:#1c2328;border:1px solid #2c353c;border-radius:8px">
+      <section id="{{g.id}}" style="scroll-margin-top:172px;display:flex;flex-direction:column;gap:12px;padding:20px;background:#1c2328;border:1px solid #2c353c;border-radius:8px">
         <sc-if value="{{g.hasTitle}}" hint-placeholder-val="{{ true }}">
           <h2 style="margin:0;font-family:'Noto Serif TC',serif;font-weight:600;font-size:22px;color:#e8e4da">{{g.title}}</h2>
         </sc-if>
@@ -128,7 +128,7 @@ class Component extends DCLogic {
       if (!g.en) return;
       const s = (g.title + ' ' + g.en + ' ' + x.name).toLowerCase();
       if (terms.every((t) => s.includes(t))) hits.push({ title: g.title.replace(/^\d+\.\s*/, ''), en: g.en, where: x.name,
-        go: () => { location.hash = encodeURIComponent(x.name); setTimeout(() => { const el = document.getElementById('g' + gi); if (el) el.scrollIntoView({ behavior: 'smooth' }); }, 50); } });
+        go: () => { this.setState({ q: '' }); location.hash = encodeURIComponent(x.name); setTimeout(() => { const el = document.getElementById('g' + gi); if (el) el.scrollIntoView({ behavior: 'smooth' }); }, 50); } });
     }));
     const qs = { on: grouped, q: this.state.q, hasQ: terms.length > 0, onQ: (e) => this.setState({ q: e.target.value }),
       sum: hits.length ? '搵到 ' + hits.length + ' 個任務' + (hits.length > 50 ? '（只顯示頭 50 個）' : '') : '搵唔到相符任務，試下用較短嘅關鍵字。',
