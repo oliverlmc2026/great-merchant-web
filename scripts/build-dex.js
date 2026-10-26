@@ -151,7 +151,7 @@ for (const [key, cfg] of Object.entries(PAGES)) {
   const data = cfg.tabs.map(([name, file]) => ({ name, groups: toGroups(parse(file)), extra: [] }));
   fs.writeFileSync(path.join(DIR, key + '-data.js'), 'window.UNITS_DATA=' + JSON.stringify(data) + ';\n');
   const tpl = fs.readFileSync(path.join(__dirname, 'dex-template.html'), 'utf8')
-    .replace(/__LABEL__/g, cfg.label).replace(/__KEY__/g, key).replace(/__BLURB__/g, cfg.blurb);
+    .replace(/__LABEL__/g, cfg.label).replace(/__KEY__/g, key).replace(/__BLURB__/g, cfg.blurb).replace(/__IMG__/g, 'dex/');
   fs.writeFileSync(path.join(DIR, key + '.dc.html'), tpl);
   stats[key] = data.map((d) => d.name + ':' + d.groups.length);
 }

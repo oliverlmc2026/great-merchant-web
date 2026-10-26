@@ -8,14 +8,14 @@ const DIR = path.join(__dirname, '..', 'jushang-db');
 const PAGE_LABEL = {
   Newbie: '新手入門', Kings: '四天王', Beasts: '兇獸', Units: '將帥與傭兵',
   Sys: '主角與系統', Equip: '裝備', Prod: '生產與商團', Inst: '副本與活動', Ver: '版本與公告',
-  Dex: '傭兵與數據圖鑑', Gear: '裝備圖鑑', Guide: '攻略與筆記'
+  Dex: '傭兵與數據圖鑑', Gear: '裝備圖鑑', Guide: '攻略與筆記', Quest: '任務流程'
 };
 const clean = (s) => String(s).replace(/\s+/g, ' ').trim();
 const out = [];
 const add = (p, tab, text) => { text = clean(text); if (text) out.push({ p, t: tab, x: text }); };
 
 // 1) Data-file pages: rows of cells {t, i}
-for (const p of ['Units', 'Sys', 'Equip', 'Prod', 'Inst', 'Ver', 'Dex', 'Gear', 'Guide']) {
+for (const p of ['Units', 'Sys', 'Equip', 'Prod', 'Inst', 'Ver', 'Dex', 'Gear', 'Guide', 'Quest']) {
   const f = p === 'Units' ? 'units-data.js' : p + '-data.js';
   const ctx = { window: {} };
   vm.createContext(ctx);
