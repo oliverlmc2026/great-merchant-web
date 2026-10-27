@@ -1,0 +1,692 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>怪物掉落價值</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@600;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="./highlight.js"></script>
+<script src="./page-search.js"></script>
+<script src="./Drop-data.js"></script>
+<style>
+:root{color-scheme:dark}
+body{margin:0;background:#14181c;font-family:'Noto Sans TC',sans-serif;color:#e8e4da}
+a{color:#c9a24b}a:hover{color:#e8e4da}
+[hidden]{display:none!important}
+.page{width:100%;max-width:1280px;margin:0 auto;box-sizing:border-box;padding:56px 56px 96px;display:flex;flex-direction:column;gap:24px}
+.card{display:flex;flex-direction:column;gap:14px;padding:20px;background:#1c2328;border:1px solid #2c353c;border-radius:8px}
+h2{margin:0;font-family:'Noto Serif TC',serif;font-weight:600;font-size:22px;color:#e8e4da}
+input,select,button{font-family:inherit}
+.field{min-height:44px;box-sizing:border-box;width:100%;padding:0 12px;border-radius:6px;border:1px solid #3a444c;background:#14181c;color:#e8e4da;font-size:15px;outline:none}
+.field:focus{border-color:#c9a24b}
+.btn{min-height:44px;padding:0 16px;border-radius:6px;border:1px solid #3a444c;background:#1c2328;color:#e8e4da;font-size:14px;font-weight:700;cursor:pointer}
+.btn:hover{border-color:#c9a24b}
+.filters{display:grid;grid-template-columns:1fr 1fr 1.2fr auto;gap:10px}
+.suggest-wrap{position:relative;min-width:0}
+.suggest{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:20;max-height:260px;overflow:auto;padding:4px;border:1px solid #3a444c;border-radius:6px;background:#14181c;box-shadow:0 12px 32px rgba(0,0,0,.6)}
+.suggest button{display:block;width:100%;min-height:40px;padding:6px 10px;border:0;border-radius:4px;background:none;color:#e8e4da;font-size:14px;text-align:left;cursor:pointer}
+.suggest button:hover{background:#232a30}
+.label{font-size:14px;font-weight:700;color:#c9a24b}
+.loc-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;height:360px;align-content:start;overflow:auto;padding-right:4px}
+.pick{display:flex;align-items:center;gap:10px;min-width:0;padding:8px;border:1px solid #3a444c;border-radius:6px;background:#181e22;color:#e8e4da;font-size:13px;font-weight:700;line-height:1.4;text-align:left;cursor:pointer;overflow-wrap:anywhere}
+.pick:hover{border-color:#c9a24b}
+.pick.on{background:#d2553a;border-color:#d2553a;color:#14181c}
+.pick.on .sub{color:#14181c}
+.pick img{flex:0 0 auto;border-radius:4px;background:#0e1114;object-fit:cover}
+.loc-list img{width:56px;height:56px}
+.sub{display:block;margin-top:3px;font-size:12px;font-weight:400;color:#8a949b}
+.boss{display:block;font-size:12px;color:#d2553a}
+.pick.on .boss{color:#14181c}
+.muted{font-size:14px;color:#8a949b}
+.empty{padding:24px 16px;border:1px dashed #3a444c;border-radius:6px;text-align:center;font-size:15px;color:#8a949b}
+.head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.head .field{max-width:300px}
+.mon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}
+.mon-grid img{width:60px;height:60px;object-fit:contain}
+.profile{display:flex;align-items:center;gap:16px;padding-bottom:16px;border-bottom:1px solid #2c353c}
+.profile img{width:96px;height:96px;flex:0 0 auto;object-fit:contain;border-radius:6px;border:1px solid #2c353c;background:#0e1114}
+.profile h2{margin-bottom:10px}
+.stats{display:flex;flex-wrap:wrap;gap:6px}
+.pill{padding:4px 10px;border:1px solid #3a444c;border-radius:999px;font-size:13px;color:#c3c9ce}
+.companions{display:flex;flex-direction:column;gap:8px;padding:12px 14px;border:1px solid #33505f;border-radius:6px;background:#1f2b33}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:8px;padding:4px 10px 4px 4px;border:1px solid #3a444c;border-radius:999px;font-size:13px;font-weight:700}
+.chip img{width:32px;height:32px;object-fit:contain;border-radius:50%;background:#0e1114}
+.table-wrap{overflow-x:auto;border:1px solid #2c353c;border-radius:6px}
+table.drops{width:100%;min-width:860px;border-collapse:collapse}
+.drops th{padding:10px;background:#2a343b;color:#c9a24b;font-size:13px;text-align:right;white-space:nowrap;vertical-align:top}
+.drops th:first-child{text-align:left}
+.drops td{padding:8px 10px;border-top:1px solid #2c353c;background:#181e22;color:#c3c9ce;font-size:14px;text-align:right;vertical-align:middle}
+.item{display:flex;align-items:center;gap:10px;min-width:230px;text-align:left;cursor:help}
+.item img{width:48px;height:48px;flex:0 0 48px;object-fit:contain;border-radius:4px;background:#0e1114}
+.item-name{font-weight:700;color:#e8e4da;text-decoration:underline dotted #5d6a73;text-underline-offset:3px;overflow-wrap:anywhere}
+.rate{cursor:help;font-weight:700;color:#e8e4da;text-decoration:underline dotted #c9a24b;text-underline-offset:3px;white-space:nowrap}
+.unknown{color:#5d6a73}
+.npc{white-space:nowrap}
+.npc small{display:block;margin-top:3px;font-size:11px;color:#8a949b}
+.num{width:84px;min-height:38px;box-sizing:border-box;padding:0 8px;border-radius:6px;border:1px solid #3a444c;background:#14181c;color:#e8e4da;font-size:14px;text-align:right;outline:none}
+.num:focus{border-color:#c9a24b}
+.num.price{width:130px}
+.num:disabled{color:#5d6a73;background:#1c2328}
+.mode{min-width:110px;min-height:38px;padding:0 10px;border-radius:6px;border:1px solid #3a444c;background:#1c2328;color:#e8e4da;font-size:13px;font-weight:700;white-space:nowrap;cursor:pointer}
+.mode.custom{border-color:#c9a24b;color:#c9a24b}
+.toggle{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-top:6px;font-size:12px;color:#e8e4da;cursor:pointer}
+.toggle input{margin:0;accent-color:#c9a24b}
+.sum{white-space:nowrap;font-weight:700;color:#e8e4da}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.total{text-align:right;font-size:14px;color:#8a949b}
+.total strong{display:block;font-family:'Noto Serif TC',serif;font-size:28px;color:#c9a24b}
+.pop{position:fixed;z-index:160;box-sizing:border-box;max-width:calc(100vw - 16px);padding:10px 12px;border:1px solid #3a444c;border-radius:8px;background:#14181c;box-shadow:0 12px 32px rgba(0,0,0,.6);font-size:13px}
+.pop-title{margin-bottom:6px;font-size:14px;font-weight:700;color:#c9a24b}
+.pop-sub{color:#8a949b}
+#sources{width:340px}
+#sources .list{display:grid;gap:6px;overflow:auto}
+.src{display:flex;align-items:center;gap:8px;width:100%;min-height:44px;padding:6px 8px;border:1px solid #3a444c;border-radius:6px;background:#1c2328;color:#e8e4da;text-align:left;cursor:pointer}
+.src:hover,.src.cur{border-color:#c9a24b}
+.src img{width:32px;height:32px;flex:0 0 32px;object-fit:contain;border-radius:4px;background:#0e1114}
+.src b{display:block;font-size:13px;line-height:1.3}
+#usage{width:440px;max-height:min(380px,calc(100vh - 16px));overflow:auto}
+#usage table{width:100%;margin-top:6px;border-collapse:collapse}
+#usage td{padding:6px 4px;border-top:1px solid #2c353c;vertical-align:top;color:#c3c9ce}
+#usage td:first-child{width:3.5em;white-space:nowrap;color:#8a949b}
+#usage td:last-child{white-space:nowrap;text-align:right;font-weight:700;color:#e8e4da}
+#usage a{font-weight:700;text-decoration:none}
+@media (max-width:760px){
+  .page{padding:24px 16px 64px}
+  .filters{grid-template-columns:1fr}
+  .head .field{max-width:none}
+  .mon-grid{grid-template-columns:1fr 1fr}
+  .mon-grid img{width:48px;height:48px}
+  .profile{align-items:flex-start}
+  .profile img{width:72px;height:72px}
+  .total{text-align:left}
+}
+@media (max-width:470px){.mon-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="page">
+  <nav style="position:sticky;top:0;z-index:30;display:flex;align-items:center;height:44px;background:#14181c"><a href="Main.dc.html" style="font-size:15px;font-weight:700">← 回到目錄</a></nav>
+  <div id="page-search-slot" style="position:sticky;top:44px;z-index:29;height:52px;box-sizing:border-box;padding-bottom:8px;background:#14181c"></div>
+  <header style="display:flex;flex-direction:column;gap:12px;border-bottom:1px solid #3a444c;padding-bottom:28px">
+    <div style="font-size:14px;letter-spacing:0.3em;color:#c9a24b;font-weight:700">怪物掉落價值</div>
+    <h1 style="margin:0;font-family:'Noto Serif TC',serif;font-weight:900;font-size:clamp(36px,7vw,56px);line-height:1.1">怪物掉落成本表</h1>
+    <p style="margin:0;font-size:15px;line-height:1.7;color:#8a949b">揀國家同地點睇怪物，或者直接搜尋掉落物。每件掉落物可以揀 NPC 出售價或者自行標價，再填數量計總值；滑鼠停喺物品名睇合成用途，停喺掉落率睇邊隻怪掉得最多（資料來源 gersangelacal.com）。</p>
+  </header>
+
+  <section class="card">
+    <div class="filters">
+      <select id="country" class="field" aria-label="國家"><option value="">全部國家</option></select>
+      <select id="location" class="field" aria-label="地點"><option value="">全部地點</option></select>
+      <div class="suggest-wrap">
+        <input id="dropQ" class="field" type="search" placeholder="搜尋中／英文掉落物名稱" aria-label="搜尋掉落物" autocomplete="off">
+        <div id="suggest" class="suggest" hidden></div>
+      </div>
+      <button id="reset" class="btn" type="button">重設</button>
+    </div>
+    <div class="label">地點清單</div>
+    <div id="locList" class="loc-list"></div>
+    <div id="locLabel" class="muted">尚未選擇地點</div>
+  </section>
+
+  <section id="monSection" class="card" hidden style="scroll-margin-top:110px">
+    <div class="head">
+      <h2>地圖怪物</h2>
+      <input id="monQ" class="field" type="search" placeholder="搜尋中／英文怪物名稱" aria-label="搜尋怪物" autocomplete="off">
+    </div>
+    <div id="monGrid" class="mon-grid"></div>
+  </section>
+
+  <section id="detail" class="card" hidden style="scroll-margin-top:110px">
+    <div class="profile">
+      <img id="monImg" alt="">
+      <div>
+        <h2 id="monName"></h2>
+        <div id="monStats" class="stats"></div>
+      </div>
+    </div>
+    <div id="companions" class="companions" hidden>
+      <span class="label">同行怪物（掉落物已合併計算）</span>
+      <div id="compList" class="chips"></div>
+    </div>
+    <div class="table-wrap">
+      <table class="drops">
+        <thead>
+          <tr>
+            <th>掉落物</th><th>掉落率</th><th>NPC出售價</th><th>自行標價</th>
+            <th>計價方式<label class="toggle"><input id="female" type="checkbox">朝女 ×1.3</label></th>
+            <th>數量</th><th>小計</th>
+          </tr>
+        </thead>
+        <tbody id="dropBody"></tbody>
+      </table>
+    </div>
+    <div class="toolbar">
+      <button id="resetPrices" class="btn" type="button">清除全部自行標價</button>
+      <div class="total">物品總價值<strong id="total">0</strong></div>
+    </div>
+  </section>
+
+  <div id="state" class="empty">資料未能載入。</div>
+</div>
+
+<div id="sources" class="pop" hidden role="dialog" aria-label="掉落率最高的怪物">
+  <div class="pop-title">掉落率最高的怪物</div>
+  <div class="list"></div>
+</div>
+<div id="usage" class="pop" hidden role="dialog" aria-label="物品用途"></div>
+
+<script>
+(function () {
+  var D = window.DROP_DATA;
+  var USAGE = window.DROP_USAGE || {};
+  if (!D) return;
+  var $ = function (id) { return document.getElementById(id); };
+  var el = {
+    country: $('country'), location: $('location'), dropQ: $('dropQ'), suggest: $('suggest'), reset: $('reset'),
+    locList: $('locList'), locLabel: $('locLabel'), monSection: $('monSection'), monQ: $('monQ'), monGrid: $('monGrid'),
+    detail: $('detail'), monImg: $('monImg'), monName: $('monName'), monStats: $('monStats'), companions: $('companions'),
+    compList: $('compList'), dropBody: $('dropBody'), female: $('female'), total: $('total'), resetPrices: $('resetPrices'),
+    sources: $('sources'), usage: $('usage')
+  };
+  $('state').hidden = true;
+
+  // per-browser settings, same shape as the source site so a pasted export still works
+  var KEYS = { prices: 'monsterdrop.customPrices.v1', modes: 'monsterdrop.priceModes.v1', qty: 'monsterdrop.quantities.v1', female: 'monsterdrop.koreaFemaleBonus.v1' };
+  function load(k) { try { var v = JSON.parse(localStorage.getItem(k) || '{}'); return v && typeof v === 'object' ? v : {}; } catch (e) { return {}; } }
+  function save(k, v) { try { localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v)); } catch (e) { /* storage blocked: keep in memory */ } }
+  var S = { map: null, monster: null, prices: load(KEYS.prices), modes: load(KEYS.modes), qty: load(KEYS.qty), female: false };
+  try { S.female = localStorage.getItem(KEYS.female) === '1'; } catch (e) { /* default off */ }
+
+  function mk(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function fmt(v, digits) { var n = Number(v); return Number.isFinite(n) ? n.toLocaleString('zh-Hant', { maximumFractionDigits: digits || 0 }) : '0'; }
+  function bi(r) { var c = String(r && r.name || '').trim(), e = String(r && r.englishName || '').trim(); return !e || e.toLowerCase() === c.toLowerCase() ? c : c + ' / ' + e; }
+  function rateText(r) { return r == null ? '未提供' : fmt(r / 1000, 3) + '%'; }
+  function byRate(a, b) { return (b == null ? -1 : b) - (a == null ? -1 : a); }
+  function zh(a, b) { return String(a).localeCompare(String(b), 'zh-Hant'); }
+  function img(src, label, cls) {
+    var i = mk('img', cls);
+    i.loading = 'lazy';
+    i.alt = label || '';
+    i.onerror = function () { i.onerror = null; i.src = placeholder(label); };
+    i.src = src || placeholder(label);
+    return i;
+  }
+  function placeholder(label) {
+    var t = String(label || '?').trim().slice(0, 2).replace(/[&<>"]/g, '');
+    return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120"><rect width="120" height="120" rx="12" fill="#232a30"/><text x="60" y="68" text-anchor="middle" font-size="26" font-family="sans-serif" font-weight="700" fill="#8a949b">' + t + '</text></svg>');
+  }
+  // loose match: ignore spaces, brackets and 的/之 so 「火龍之印章」 finds 「火龍的印」
+  function norm(v) { return String(v || '').toLowerCase().replace(/\s+/g, '').replace(/[()\[\]{}（）【】]/g, '').replace(/[的之]?印章/g, '印').replace(/[的之]/g, ''); }
+  function matches(text, q) { var n = norm(q); return !n || norm(text).indexOf(n) !== -1; }
+
+  // indexes
+  var entries = [];
+  var monstersById = {};
+  var sourcesByItem = {};
+  D.countries.forEach(function (c) {
+    c.maps.forEach(function (m) {
+      entries.push({ key: c.id + ':' + m.id, tab: c.name + '·' + m.name, country: c, map: m });
+      m.monsters.forEach(function (mo) {
+        if (!monstersById[mo.id]) monstersById[mo.id] = mo;
+        (mo.drops || []).forEach(function (d) {
+          var list = sourcesByItem[d.itemId] || (sourcesByItem[d.itemId] = []);
+          var old = list.find(function (s) { return s.monster.id === mo.id; });
+          if (!old) list.push({ monster: mo, country: c, map: m, rate: d.rate });
+          else if (byRate(d.rate, old.rate) < 0) Object.assign(old, { country: c, map: m, rate: d.rate });
+        });
+      });
+    });
+  });
+  Object.keys(sourcesByItem).forEach(function (k) { sourcesByItem[k].sort(function (a, b) { return byRate(a.rate, b.rate) || zh(a.monster.name, b.monster.name); }); });
+  var allItems = Object.keys(D.items).map(function (k) { return D.items[k]; }).sort(function (a, b) { return zh(a.name, b.name); });
+  var itemFor = function (d) { return D.items[d.itemId] || { id: d.itemId, name: '物品 ' + d.itemId, image: '', systemPrice: 0, shopBuyable: false }; };
+  var itemText = function (it) { return [it.name, it.englishName, it.koreanName].filter(Boolean).join(' '); };
+  var dropQ = function () { return el.dropQ.value.trim(); };
+  var hasDrop = function (mo, q) { return !q || (mo.drops || []).some(function (d) { return matches(itemText(itemFor(d)), q); }); };
+  var entryOf = function (key) { return entries.find(function (e) { return e.key === key; }) || null; };
+
+  // pricing
+  var isCustom = function (it) { return S.modes[it.id] === 'custom'; };
+  var npcPrice = function (it) { var b = Number(it.systemPrice) || 0; return S.female && !it.shopBuyable ? Math.floor(b * 1.3) : b; };
+  var savedPrice = function (it) { var v = Number(S.prices[it.id]); return Number.isFinite(v) && v >= 0 ? v : (Number(it.systemPrice) || 0); };
+  var unitPrice = function (it) { return isCustom(it) ? savedPrice(it) : npcPrice(it); };
+  var qtyOf = function (it) { var v = Number(S.qty[it.id]); return Number.isFinite(v) && v >= 0 ? v : 1; };
+
+  function companionsOf(mo) {
+    var seen = {};
+    return (mo.companions || []).map(function (id) {
+      if (id === mo.id || seen[id]) return null;
+      seen[id] = true;
+      return monstersById[id] || null;
+    }).filter(Boolean);
+  }
+  function mergedDrops(mo) {
+    var seen = {};
+    var out = [];
+    [mo].concat(companionsOf(mo)).forEach(function (m) {
+      (m.drops || []).forEach(function (d) { if (!seen[d.itemId]) { seen[d.itemId] = true; out.push(d); } });
+    });
+    return out.sort(function (a, b) { return byRate(a.rate, b.rate) || zh(itemFor(a).name, itemFor(b).name); });
+  }
+
+  // filters
+  function fillLocations() {
+    var keep = el.location.value;
+    var cid = el.country.value;
+    el.location.textContent = '';
+    el.location.appendChild(new Option('全部地點', ''));
+    entries.forEach(function (e) {
+      if (cid && e.country.id !== cid) return;
+      el.location.appendChild(new Option(cid ? bi(e.map) : bi(e.country) + ' · ' + bi(e.map), e.key));
+    });
+    if (entryOf(keep) && (!cid || entryOf(keep).country.id === cid)) el.location.value = keep;
+  }
+  function selectMap(key, keepMonster) {
+    var e = entryOf(key);
+    S.map = e ? e.map : null;
+    if (!keepMonster || (S.monster && S.map && !S.map.monsters.some(function (m) { return m.id === S.monster.id; }))) S.monster = null;
+  }
+  function visibleEntries() {
+    var cid = el.country.value;
+    var q = dropQ();
+    var sel = q ? '' : el.location.value;
+    return entries.filter(function (e) {
+      return (!cid || e.country.id === cid) && (!sel || e.key === sel) && (!q || e.map.monsters.some(function (m) { return hasDrop(m, q); }));
+    }).sort(function (a, b) { return zh(a.map.name, b.map.name); });
+  }
+
+  function renderLocations() {
+    el.locList.textContent = '';
+    var list = visibleEntries();
+    if (!list.length) { el.locList.appendChild(mk('div', 'empty', '此條件下沒有可選地點')); return; }
+    list.forEach(function (e) {
+      var b = mk('button', 'pick' + (el.location.value === e.key ? ' on' : ''));
+      b.type = 'button';
+      b.appendChild(img(e.map.image, e.map.name));
+      b.appendChild(mk('span', '', bi(e.map)));
+      b.addEventListener('click', function () {
+        el.location.value = el.location.value === e.key ? '' : e.key;
+        selectMap(el.location.value);
+        hideSuggest();
+        render();
+      });
+      el.locList.appendChild(b);
+    });
+  }
+
+  function renderLabel() {
+    var q = dropQ();
+    el.locLabel.textContent = S.map ? bi(S.map) + ' · ' + S.map.monsters.length + ' 隻怪物'
+      : q ? '掉落搜尋中：' + q + '（顯示所有符合地點）' : '尚未選擇地點';
+  }
+
+  function visibleMonsters() {
+    var q = dropQ();
+    var nq = el.monQ.value.trim().toLowerCase();
+    var list = [];
+    if (S.map) list = S.map.monsters.slice();
+    else if (q) visibleEntries().forEach(function (e) { e.map.monsters.forEach(function (m) { if (!list.some(function (x) { return x.id === m.id; })) list.push(m); }); });
+    return list.filter(function (m) {
+      return hasDrop(m, q) && (!nq || [m.name, m.englishName, m.koreanName].some(function (t) { return String(t || '').toLowerCase().indexOf(nq) !== -1; }));
+    });
+  }
+
+  function renderMonsters() {
+    el.monGrid.textContent = '';
+    el.monSection.hidden = !S.map && !dropQ();
+    if (el.monSection.hidden) return;
+    var list = visibleMonsters();
+    if (!list.length) { el.monGrid.appendChild(mk('div', 'empty', dropQ() ? '找不到會掉落此物品的怪物' : '找不到符合的怪物')); return; }
+    list.forEach(function (m) {
+      var b = mk('button', 'pick' + (S.monster && S.monster.id === m.id ? ' on' : ''));
+      b.type = 'button';
+      b.appendChild(img(m.image, m.name));
+      var t = mk('span');
+      t.appendChild(document.createTextNode(bi(m)));
+      if (m.boss) t.appendChild(mk('span', 'boss', 'BOSS'));
+      t.appendChild(mk('span', 'sub', 'EXP ' + fmt(m.exp) + ' · ' + m.drops.length + ' 項掉落'));
+      b.appendChild(t);
+      b.addEventListener('click', function () {
+        S.monster = m;
+        renderMonsters();
+        renderDetail();
+        el.detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      el.monGrid.appendChild(b);
+    });
+  }
+
+  function renderDetail() {
+    var m = S.monster;
+    el.detail.hidden = !m;
+    if (!m) return;
+    el.monName.textContent = bi(m) + (m.boss ? '（BOSS）' : '');
+    var pic = img(m.image, m.name);
+    el.monImg.onerror = pic.onerror;
+    el.monImg.src = pic.src;
+    el.monImg.alt = m.name;
+    el.monStats.textContent = '';
+    [['EXP', fmt(m.exp)], ['HP', fmt(m.hp)], ['MP', fmt(m.mp)], ['攻擊', fmt(m.minAttack) + '–' + fmt(m.maxAttack)],
+      ['打擊抵抗', fmt(m.physicalResistance)], ['法術抵抗', fmt(m.magicResistance)]].forEach(function (s) {
+      el.monStats.appendChild(mk('span', 'pill', s[0] + ' ' + s[1]));
+    });
+    var comps = companionsOf(m);
+    el.companions.hidden = !comps.length;
+    el.compList.textContent = '';
+    comps.forEach(function (c) {
+      var chip = mk('span', 'chip');
+      chip.appendChild(img(c.image, c.name));
+      chip.appendChild(mk('span', '', bi(c)));
+      el.compList.appendChild(chip);
+    });
+    renderDrops();
+  }
+
+  function numInput(cls, value, label, onChange) {
+    var i = mk('input', 'num' + (cls ? ' ' + cls : ''));
+    i.type = 'number';
+    i.min = '0';
+    i.step = '1';
+    i.inputMode = 'numeric';
+    i.value = String(value);
+    i.setAttribute('aria-label', label);
+    i.addEventListener('input', function () {
+      var v = Number(i.value);
+      onChange(i.value !== '' && Number.isFinite(v) && v >= 0 ? v : null);
+      updateSums();
+    });
+    return i;
+  }
+
+  function renderDrops() {
+    hideSources();
+    el.dropBody.textContent = '';
+    var drops = mergedDrops(S.monster);
+    if (!drops.length) {
+      var tr = mk('tr');
+      var td = mk('td', 'empty', '此怪物沒有掉落資料');
+      td.colSpan = 7;
+      tr.appendChild(td);
+      el.dropBody.appendChild(tr);
+    }
+    drops.forEach(function (d) {
+      var it = itemFor(d);
+      var tr = mk('tr');
+      var cells = [];
+      for (var n = 0; n < 7; n++) cells.push(tr.appendChild(mk('td')));
+
+      var info = mk('div', 'item');
+      info.appendChild(img(it.image, it.name));
+      info.appendChild(mk('span', 'item-name', bi(it)));
+      hoverPop(info, function () { showUsage(it, info); }, hideUsageSoon);
+      cells[0].appendChild(info);
+
+      cells[1].textContent = rateText(d.rate);
+      cells[1].className = 'rate' + (d.rate == null ? ' unknown' : '');
+      hoverPop(cells[1], function () { showSources(it, cells[1]); }, hideSourcesSoon);
+
+      cells[2].className = 'npc';
+      if (isCustom(it)) cells[2].textContent = '';
+      else if (!(Number(it.systemPrice) > 0)) { cells[2].textContent = '未提供'; cells[2].classList.add('unknown'); }
+      else {
+        cells[2].textContent = fmt(npcPrice(it));
+        if (it.shopBuyable) cells[2].appendChild(mk('small', '', '商店可買'));
+      }
+
+      var price = numInput('price', savedPrice(it), it.name + '自行標價', function (v) {
+        if (v == null) delete S.prices[it.id]; else S.prices[it.id] = v;
+        save(KEYS.prices, S.prices);
+      });
+      price.disabled = !isCustom(it);
+      cells[3].appendChild(price);
+
+      var mode = mk('button', 'mode' + (isCustom(it) ? ' custom' : ''), isCustom(it) ? '自行標價' : 'NPC出售價');
+      mode.type = 'button';
+      mode.setAttribute('aria-pressed', String(isCustom(it)));
+      mode.setAttribute('aria-label', it.name + '計價方式');
+      mode.addEventListener('click', function () {
+        if (isCustom(it)) delete S.modes[it.id]; else S.modes[it.id] = 'custom';
+        save(KEYS.modes, S.modes);
+        renderDrops();
+      });
+      cells[4].appendChild(mode);
+
+      cells[5].appendChild(numInput('', qtyOf(it), it.name + '數量', function (v) {
+        if (v == null) delete S.qty[it.id]; else S.qty[it.id] = v;
+        save(KEYS.qty, S.qty);
+      }));
+
+      cells[6].className = 'sum';
+      cells[6].dataset.item = it.id;
+      el.dropBody.appendChild(tr);
+    });
+    updateSums();
+  }
+
+  function updateSums() {
+    var total = 0;
+    el.dropBody.querySelectorAll('td.sum').forEach(function (td) {
+      var it = D.items[td.dataset.item] || { systemPrice: 0 };
+      var v = unitPrice(it) * qtyOf(it);
+      total += v;
+      td.textContent = fmt(v, 2);
+    });
+    el.total.textContent = fmt(total, 2);
+  }
+
+  // drop search suggestions
+  function hideSuggest() { el.suggest.hidden = true; el.suggest.textContent = ''; }
+  function renderSuggest() {
+    var q = dropQ();
+    var hits = q ? allItems.filter(function (it) { return matches(itemText(it), q); }).slice(0, 12) : [];
+    if (!hits.length) { hideSuggest(); return; }
+    el.suggest.textContent = '';
+    hits.forEach(function (it) {
+      var b = mk('button', '', bi(it));
+      b.type = 'button';
+      b.addEventListener('click', function () {
+        el.dropQ.value = it.name;
+        el.location.value = '';
+        selectMap('');
+        hideSuggest();
+        render();
+      });
+      el.suggest.appendChild(b);
+    });
+    el.suggest.hidden = false;
+  }
+
+  // popovers: hover on desktop, tap on touch screens
+  var touch = window.matchMedia('(hover: none)');
+  function hoverPop(target, show, hideSoon) {
+    target.tabIndex = 0;
+    target.setAttribute('aria-haspopup', 'dialog');
+    target.addEventListener('mouseenter', show);
+    target.addEventListener('mouseleave', hideSoon);
+    target.addEventListener('focus', show);
+    target.addEventListener('blur', hideSoon);
+    target.addEventListener('click', function (e) { if (touch.matches) { e.preventDefault(); show(); } });
+  }
+  function place(pop, anchor) {
+    pop.hidden = false;
+    var r = anchor.getBoundingClientRect();
+    var list = pop.querySelector('.list');
+    if (list) list.style.maxHeight = '';
+    var below = window.innerHeight - 8 - (r.bottom + 6);
+    var above = r.top - 6 - 100;
+    if (list && pop.offsetHeight > Math.max(below, above)) {
+      list.style.maxHeight = Math.max(96, Math.max(below, above) - (pop.offsetHeight - list.clientHeight)) + 'px';
+    }
+    var top = below >= pop.offsetHeight || below >= above ? r.bottom + 6 : r.top - pop.offsetHeight - 6;
+    pop.style.left = Math.max(8, Math.min(r.left, window.innerWidth - pop.offsetWidth - 8)) + 'px';
+    pop.style.top = Math.max(8, Math.min(top, window.innerHeight - pop.offsetHeight - 8)) + 'px';
+  }
+  var timers = {};
+  function hideSources() { clearTimeout(timers.s); el.sources.hidden = true; }
+  function hideUsage() { clearTimeout(timers.u); el.usage.hidden = true; }
+  function hideSourcesSoon() { clearTimeout(timers.s); timers.s = setTimeout(hideSources, 180); }
+  function hideUsageSoon() { clearTimeout(timers.u); timers.u = setTimeout(hideUsage, 180); }
+  [['sources', 's', hideSourcesSoon], ['usage', 'u', hideUsageSoon]].forEach(function (p) {
+    el[p[0]].addEventListener('mouseenter', function () { clearTimeout(timers[p[1]]); });
+    el[p[0]].addEventListener('mouseleave', p[2]);
+  });
+
+  function showSources(it, anchor) {
+    hideUsage();
+    clearTimeout(timers.s);
+    var list = el.sources.querySelector('.list');
+    list.textContent = '';
+    var seen = {};
+    var top = (sourcesByItem[it.id] || []).filter(function (s) { var k = norm(s.monster.name); if (!k || seen[k]) return false; seen[k] = true; return true; }).slice(0, 10);
+    if (!top.length) list.appendChild(mk('div', 'pop-sub', '沒有其他怪物掉落這件物品'));
+    top.forEach(function (s) {
+      var cur = S.monster && S.monster.id === s.monster.id;
+      var b = mk('button', 'src' + (cur ? ' cur' : ''));
+      b.type = 'button';
+      b.appendChild(img(s.monster.image, s.monster.name));
+      var t = mk('span');
+      t.appendChild(mk('b', '', bi(s.monster) + (cur ? '（目前）' : '')));
+      t.appendChild(mk('span', 'pop-sub', bi(s.map) + ' · ' + rateText(s.rate)));
+      b.appendChild(t);
+      b.addEventListener('click', function () { jumpTo(s.country, s.map, s.monster); });
+      list.appendChild(b);
+    });
+    place(el.sources, anchor);
+  }
+
+  function usageKey(name) {
+    var t = String(name || '').trim().normalize('NFKC').replace(/隆/g, '雷').replace(/\s+(?=[(（])/g, '').replace(/\s+/g, ' ').trim();
+    t = t.replace(/^古代(.+)的印章/u, '古代$1之印章');
+    return t === '古代火之印章(雷)' || t === '古代風之印章(雷)' ? '古代雷之印章(雷)' : t;
+  }
+  var USAGE_GROUPS = [['成本', 'crafts', 'craftCount'], ['匠人', 'artisans', 'artisanCount'], ['材料', 'materials', 'materialCount'],
+    ['設施', 'facilities', 'facilityCount'], ['星座', 'stars', 'starCount'], ['陣法', 'strategies', 'strategyCount'],
+    ['冥王', 'vidyarajas', 'vidyarajaCount'], ['鬼道', 'enchants', 'enchantCount'], ['任務', 'quests', 'questCount']];
+  function qtyText(r) {
+    var lo = r.qtyMin != null ? r.qtyMin : r.qty, hi = r.qtyMax != null ? r.qtyMax : r.qty;
+    if (lo == null && hi == null) return '';
+    return lo != null && hi != null && Number(lo) !== Number(hi) ? '×' + lo + '–' + hi : '×' + (lo != null ? lo : hi);
+  }
+  function showUsage(it, anchor) {
+    hideSources();
+    clearTimeout(timers.u);
+    var pop = el.usage;
+    pop.textContent = '';
+    pop.appendChild(mk('div', 'pop-title', it.name));
+    if (it.englishName) pop.appendChild(mk('div', 'pop-sub', it.englishName));
+    var info = USAGE[usageKey(it.name)] || {};
+    var table = mk('table');
+    USAGE_GROUPS.forEach(function (g) {
+      var rows = info[g[1]] || [];
+      rows.forEach(function (r) {
+        var tr = mk('tr');
+        tr.appendChild(mk('td', '', g[0]));
+        var a = mk('a', '', r.name + (r.name_en ? ' / ' + r.name_en : ''));
+        a.href = r.href;
+        a.target = '_blank';
+        a.rel = 'noopener';
+        tr.appendChild(mk('td')).appendChild(a);
+        tr.appendChild(mk('td', '', qtyText(r)));
+        table.appendChild(tr);
+      });
+      var more = (info[g[2]] || rows.length) - rows.length;
+      if (more > 0) {
+        var tr = mk('tr');
+        var td = mk('td', 'pop-sub', '還有 ' + more + ' 筆' + g[0]);
+        td.colSpan = 3;
+        tr.appendChild(td);
+        table.appendChild(tr);
+      }
+    });
+    if (table.rows.length) pop.appendChild(table);
+    else pop.appendChild(mk('div', 'pop-sub', '沒有合成用途，也不是任務材料'));
+    place(pop, anchor);
+  }
+
+  function jumpTo(country, map, monster) {
+    el.country.value = country.id;
+    fillLocations();
+    el.location.value = country.id + ':' + map.id;
+    el.dropQ.value = '';
+    el.monQ.value = '';
+    selectMap(el.location.value);
+    S.monster = map.monsters.find(function (m) { return m.id === monster.id; }) || monster;
+    hideSuggest();
+    hideSources();
+    render();
+    el.detail.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function render() {
+    renderLocations();
+    renderLabel();
+    renderMonsters();
+    renderDetail();
+  }
+
+  el.country.addEventListener('change', function () { fillLocations(); selectMap(el.location.value); hideSuggest(); render(); });
+  el.location.addEventListener('change', function () { selectMap(el.location.value); hideSuggest(); render(); });
+  el.dropQ.addEventListener('input', function () { renderSuggest(); selectMap(el.location.value, true); render(); });
+  el.monQ.addEventListener('input', renderMonsters);
+  el.reset.addEventListener('click', function () {
+    el.country.value = '';
+    el.dropQ.value = '';
+    el.monQ.value = '';
+    fillLocations();
+    el.location.value = '';
+    selectMap('');
+    hideSuggest();
+    render();
+  });
+  el.female.checked = S.female;
+  el.female.addEventListener('change', function () { S.female = el.female.checked; save(KEYS.female, S.female ? '1' : '0'); renderDrops(); });
+  el.resetPrices.addEventListener('click', function () {
+    if (!window.confirm('確定清除這個瀏覽器內全部自行標價？')) return;
+    S.prices = {};
+    S.modes = {};
+    save(KEYS.prices, S.prices);
+    save(KEYS.modes, S.modes);
+    renderDrops();
+  });
+  document.addEventListener('click', function (e) {
+    if (!el.dropQ.contains(e.target) && !el.suggest.contains(e.target)) hideSuggest();
+    if (!el.sources.contains(e.target) && !e.target.closest('.rate')) hideSources();
+    if (!el.usage.contains(e.target) && !e.target.closest('.item')) hideUsage();
+  });
+  window.addEventListener('scroll', function (e) {
+    if (!el.sources.contains(e.target)) hideSources();
+    if (!el.usage.contains(e.target)) hideUsage();
+  }, true);
+  window.addEventListener('resize', function () { hideSources(); hideUsage(); });
+
+  D.countries.forEach(function (c) { el.country.appendChild(new Option(bi(c), c.id)); });
+  fillLocations();
+
+  // entry points: ?item=<id>, ?monster=<id>, or #國家·地圖 from the site search
+  function openFromUrl() {
+    var p = new URLSearchParams(location.search);
+    var item = D.items[p.get('item')];
+    if (item) el.dropQ.value = item.name;
+    var mid = p.get('monster');
+    var tab = decodeURIComponent(location.hash.slice(1));
+    var e = mid ? entries.find(function (x) { return x.map.monsters.some(function (m) { return m.id === mid; }); })
+      : entries.find(function (x) { return x.tab === tab; });
+    if (e) {
+      el.country.value = e.country.id;
+      fillLocations();
+      el.location.value = e.key;
+      selectMap(e.key);
+      S.monster = mid ? e.map.monsters.find(function (m) { return m.id === mid; }) : null;
+    }
+    render();
+    if (S.monster) el.detail.scrollIntoView({ block: 'start' });
+    else if (e) el.monSection.scrollIntoView({ block: 'start' });
+  }
+  window.addEventListener('hashchange', openFromUrl);
+  openFromUrl();
+})();
+</script>
+</body>
+</html>

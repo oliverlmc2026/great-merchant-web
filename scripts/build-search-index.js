@@ -8,7 +8,7 @@ const DIR = path.join(__dirname, '..', 'jushang-db');
 const PAGE_LABEL = {
   Newbie: '新手入門', Kings: '四天王', Beasts: '兇獸', Units: '將帥與傭兵',
   Sys: '主角與系統', Equip: '裝備', Prod: '生產與商團', Inst: '副本與活動', Ver: '版本與公告',
-  Dex: '傭兵與數據圖鑑', Gear: '裝備圖鑑', Guide: '攻略與筆記', Quest: '任務流程'
+  Dex: '傭兵與數據圖鑑', Gear: '裝備圖鑑', Guide: '攻略與筆記', Quest: '任務流程', Drop: '怪物掉落價值'
 };
 const clean = (s) => String(s).replace(/\s+/g, ' ').trim();
 const out = [];
@@ -26,7 +26,21 @@ for (const p of ['Units', 'Sys', 'Equip', 'Prod', 'Inst', 'Ver', 'Dex', 'Gear', 
   }
 }
 
-// 2) Inline pages: run the page's component with a stub DCLogic and collect rendered strings
+// 2) 怪物掉落價值: one tab per map (國家·地圖), one row per monster with its drops
+{
+  const ctx = { window: {} };
+  vm.createContext(ctx);
+  vm.runInContext(fs.readFileSync(path.join(DIR, 'Drop-data.js'), 'utf8'), ctx);
+  const { countries, items } = ctx.window.DROP_DATA;
+  const bi = (r) => (r.englishName && r.englishName !== r.name ? r.name + ' / ' + r.englishName : r.name);
+  for (const c of countries) for (const m of c.maps) {
+    const tab = c.name + '·' + m.name;
+    add('Drop', tab, tab + ' ' + bi(m));
+    for (const mo of m.monsters) add('Drop', tab, bi(mo) + '：' + mo.drops.map((d) => items[d.itemId] && items[d.itemId].name).filter(Boolean).join('、'));
+  }
+}
+
+// 3) Inline pages: run the page's component with a stub DCLogic and collect rendered strings
 const SKIP_KEYS = new Set(['bg', 'fg', 'border', 'tagColor', 'img', 'imgs', 'extra', 'pick', 'on']);
 const collect = (v, acc, key) => {
   if (typeof v === 'string') {
